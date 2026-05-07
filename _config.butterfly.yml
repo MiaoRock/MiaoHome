@@ -1,0 +1,9 @@
+darkmode:
+  enable: true
+  button: true
+  autoChangeMode: false
+  start: dark
+
+inject:
+  head:
+    - <link rel="stylesheet" href="/css/home.css">

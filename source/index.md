@@ -1,0 +1,107 @@
+---
+layout: page
+aside: false
+top_img: false
+comments: false
+---
+
+<div class="home-container">
+    <div class="left-column">
+        <div class="profile-card">
+            <h2>Rock Miao</h2>
+            <div class="contact-link">
+                <a href="https://github.com/MiaoRock" target="_blank">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"></path>
+                    </svg>
+                </a>
+                <a href="https://space.bilibili.com/9619474" target="_blank">
+                    <img src="img/icons/bilibili.ico" alt="bilibili">
+                </a>
+                <a href="https://www.hpoi.net/user/154815" target="_blank">
+                    <img src="img/icons/hpoi.png" alt="hpoi">
+                </a>
+                <a href="https://weibo.com/u/1269451150" target="_blank">
+                    <img src="img/icons/weibo.ico" alt="weibo">
+                </a>
+                <a href="https://www.zhihu.com/people/miao-ge-86-32" target="_blank">
+                    <img src="img/icons/zhihu.ico" alt="zhihu">
+                </a>
+            </div>
+            <div class="contact-list">
+                <a href="mailto:mh281295900@163.com">
+                    <i class="fas fa-envelope"></i>
+                    <span>mh281295900@163.com</span>
+                </a>
+                <a href="https://steamcommunity.com/profiles/76561198095679233/" target="_blank">
+                    <img src="img/icons/steam.ico" alt="Steam">
+                    <span>135413505</span>
+                </a>
+                <div>
+                    <img src="img/icons/nintendo.avif" alt="Nintendo">
+                    <span>201711144928</span>
+                </div>
+                <div>
+                    <img src="img/icons/ps.webp" alt="PS5">
+                    <span>InflatableEve</span>
+                </div>
+            </div>
+        </div>
+        <div class="site-card">
+            <h2>常用网站</h2>
+            <div class="site-list">
+                <a href="https://www.baidu.com" target="_blank">
+                    <img src="https://www.baidu.com/favicon.ico" alt="baidu">
+                    <span>baidu</span>
+                </a>
+                <a class="need-vpn" href="https://chatgpt.com" target="_blank">
+                    <img src="https://chatgpt.com/favicon.ico" alt="chatgpt">
+                    <span>chatGPT</span>
+                </a>
+                <a class="need-vpn" href="https://www.netflix.com/browse" target="_blank">
+                    <img src="https://assets.nflxext.com/ffe/siteui/common/icons/nficon2016.ico" alt="Netflix">
+                    <span>Netflix</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="middle-column">
+        <div class="gallery-wall">
+            {% home_gallery %}
+        </div>
+    </div>
+    <div class="right-column">
+        <div class="story-timeline">
+            <div class="timeline">
+                <div class="timeline-item headline">
+                    <div class="timeline-item-title">
+                        <div class="item-circle">全部文章 - 2</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-item-title">
+                        <div class="item-circle">2026</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-item-title">
+                        <div class="item-circle"></div>
+                    </div>
+                    <div class="timeline-item-content">
+                        <time datetime="2026-04-25">2026-04-25</time>
+                        <a href="#" title="第一章">第一章</a>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-item-title">
+                        <div class="item-circle"></div>
+                    </div>
+                    <div class="timeline-item-content">
+                        <time datetime="2026-04-25">2026-04-25</time>
+                        <a href="#" title="第二章">第二章</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
