@@ -72,36 +72,7 @@ comments: false
     </div>
     <div class="right-column">
         <div class="story-timeline">
-            <div class="timeline">
-                <div class="timeline-item headline">
-                    <div class="timeline-item-title">
-                        <div class="item-circle">全部文章 - 2</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-item-title">
-                        <div class="item-circle">2026</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-item-title">
-                        <div class="item-circle"></div>
-                    </div>
-                    <div class="timeline-item-content">
-                        <time datetime="2026-04-25">2026-04-25</time>
-                        <a href="#" title="第一章">第一章</a>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-item-title">
-                        <div class="item-circle"></div>
-                    </div>
-                    <div class="timeline-item-content">
-                        <time datetime="2026-04-25">2026-04-25</time>
-                        <a href="#" title="第二章">第二章</a>
-                    </div>
-                </div>
-            </div>
+            {% home_story %}
         </div>
     </div>
 </div>
