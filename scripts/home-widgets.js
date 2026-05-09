@@ -1,28 +1,31 @@
 const fs = require('fs');
 const path = require('path');
+
+
 hexo.extend.tag.register('home_gallery', function () {
-    const dir = path.join(hexo.source_dir, 'gallery');
-    let files = [];
+    const dir = path.join(hexo.source_dir, 'gallery')
+    let files = []
 
     try {
         files = fs.readdirSync(dir);
     } catch (e) {
-        return '<div>no images</div>';
+        return '<div>no images</div>'
     }
 
-    const images = files
+    const imageFiles = files
         .filter(f => /\.(png|jpg|jpeg|webp|gif)$/i.test(f))
-        .map((file, index) => {
-            return `<img class="${index === 0 ? 'gallery-main' : 'gallery-sub'}"
-                        src="/gallery/${file}" alt="">`;
-        })
-        .join('');
+    if (!imageFiles.length) {
+        return '<div>no images</div>'
+    }
+    const htmlParts = imageFiles.map(file => {
+        return `<img src="/gallery/${file}" alt="">`
+    });
 
-    return `<div class="gallery-grid">${images}</div>`;
+    return `<div class="gallery-grid">${htmlParts.join('')}</div>`
 });
 
 
-hexo.extend.tag.register('home_story', function (args) {
+hexo.extend.tag.register('home_story', function () {
     const storyDir = path.join(hexo.source_dir, 'story')
     const root = hexo.config.root || '/'
 
