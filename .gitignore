@@ -8,3 +8,7 @@ public/
 _multiconfig.yml
 .idea
 *.lock
+/source/story/*
+!/source/story/.gitkeep
+/source/gallery/*
+!/source/gallery/.gitkeep
