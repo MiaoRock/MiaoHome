@@ -187,7 +187,7 @@
 }
 
 .site-list a {
-    margin-top: 0.5vw;
+    margin-top: 0.8vw;
     display: flex;
     align-items: center;
     gap: 0.5vw;
@@ -212,8 +212,21 @@
 
 .need-vpn::after {
     content: "🪜";
-    margin-left: 0;
-    font-size: 0.8vw;
+}
+
+.miao-home::after {
+    content: "🏠";
+}
+
+.miao-home-lock::after {
+    content: "🏠🔒";
+}
+
+.need-vpn::after,
+.miao-home::after,
+.miao-home-lock::after {
+    margin-left: -0.3vw;
+    font-size: 0.9vw;
 }
 
 [data-theme="dark"] .site-list span {

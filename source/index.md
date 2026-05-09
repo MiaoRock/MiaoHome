@@ -50,6 +50,10 @@ comments: false
         <div class="site-card">
             <h2>常用网站</h2>
             <div class="site-list">
+                <a class="miao-home-lock" href="https://rockmiao.com/openclaw" target="_blank">
+                    <img src="img/icons/openclaw.png" alt="OpenClaw">
+                    <span>OpenClaw</span>
+                </a>
                 <a href="https://www.baidu.com" target="_blank">
                     <img src="https://www.baidu.com/favicon.ico" alt="baidu">
                     <span>baidu</span>

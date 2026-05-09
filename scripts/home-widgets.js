@@ -56,7 +56,10 @@ hexo.extend.tag.register('home_story', function (args) {
             const dateText = fm.date || ''
             const time = new Date(dateText).getTime()
             return {
-                title, dateText, time: isNaN(time) ? 0 : time, yearMonth: dateText ? String(dateText).slice(0, 7) : '', // 取 YYYY-MM
+                title,
+                dateText,
+                time: isNaN(time) ? 0 : time,
+                yearMonth: dateText ? String(dateText).slice(0, 7) : '',
                 url: root + 'story/' + encodeURIComponent(file.replace(/\.md$/, '')) + '/'
             }
         })
@@ -66,29 +69,32 @@ hexo.extend.tag.register('home_story', function (args) {
 
     list = list.filter(i => i.dateText).sort((a, b) => b.time - a.time)
 
-    const monthMap = {}
-    list.forEach(item => {
-        if (!monthMap[item.yearMonth]) monthMap[item.yearMonth] = []
-        monthMap[item.yearMonth].push(item)
-    })
+    const monthMap = list.reduce((map, item) => {
+        if (!map[item.yearMonth]) map[item.yearMonth] = []
+        map[item.yearMonth].push(item)
+        return map
+    }, {})
     const months = Object.keys(monthMap).sort((a, b) => b.localeCompare(a))
 
-    let html = '<div class="article-sort-title">今日</div>'
-    html += '<div class="article-sort">'
+    const htmlParts = ['<div class="article-sort-title">今日</div>', '<div class="article-sort">']
     months.forEach(month => {
         monthMap[month].forEach(item => {
-            html += '<div class="article-sort-item no-article-cover">'
-            html += '<div class="article-sort-item-info">'
-            html += '<div class="article-sort-item-time">'
-            html += '<i class="far fa-calendar-alt"></i>'
-            html += '<time class="post-meta-date-created" datetime="' + escapeHtml(item.dateText) + '">' + escapeHtml(item.dateText) + '</time>'
-            html += '</div>'
-            html += '<a class="article-sort-item-title" href="' + item.url + '" title="' + escapeHtml(item.title) + '">' + escapeHtml(item.title) + '</a>'
-            html += '</div>'
-            html += '</div>'
+            const safeTitle = escapeHtml(item.title)
+            const safeDate = escapeHtml(item.dateText)
+            htmlParts.push(
+                `<div class="article-sort-item no-article-cover">
+                    <div class="article-sort-item-info">
+                        <div class="article-sort-item-time">
+                            <i class="far fa-calendar-alt"></i>
+                            <time class="post-meta-date-created" datetime="${safeDate}">${safeDate}</time>
+                        </div>
+                        <a class="article-sort-item-title" href="${item.url}" title="${safeTitle}">${safeTitle}</a>
+                    </div>
+                </div>`
+            )
         })
-        html += '<div class="article-sort-item year">' + escapeHtml(month) + '</div>'
+        htmlParts.push(`<div class="article-sort-item year">${escapeHtml(month)}</div>`)
     })
-    html += '</div>'
-    return html
+    htmlParts.push('</div>')
+    return htmlParts.join('')
 })
