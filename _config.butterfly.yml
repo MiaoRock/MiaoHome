@@ -1,8 +1,4 @@
-darkmode:
-  enable: true
-  button: true
-  autoChangeMode: false
-  start: dark
+display_mode: dark
 
 inject:
   head:
