@@ -1,5 +1,5 @@
 async function loadGallery() {
-    const container = document.getElementById('wall');
+    const container = document.getElementById('gallery');
     container.innerHTML = ''; // 清空容器
 
     try {
@@ -24,7 +24,7 @@ async function loadGallery() {
 }
 
 async function loadStory() {
-    const container = document.getElementById('timeline');
+    const container = document.getElementById('story');
     container.innerHTML = '';
 
     try {

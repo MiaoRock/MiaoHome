@@ -81,6 +81,13 @@ app.get('/api/story', (req, res) => {
     });
 });
 
+app.get('/gallery/:filename', (req, res) => {
+    const file = req.params.filename;
+    const filePath = path.join(__dirname, 'gallery', file);
+    if (!fs.existsSync(filePath)) return res.status(404).send('图片不存在');
+    res.sendFile(filePath); // 或者返回 HTML 页面展示
+});
+
 app.listen(PORT, () => {
     console.log(`后端 API 已启动: http://localhost:${PORT}`);
 });

@@ -70,11 +70,11 @@ comments: false
         </div>
     </div>
     <div class="middle-column">
-        <div class="gallery-wall" id="wall">
+        <div class="gallery-wall" id="gallery">
         </div>
     </div>
     <div class="right-column">
-        <div class="story-timeline" id="timeline">
+        <div class="story-timeline" id="story">
         </div>
     </div>
 </div>
