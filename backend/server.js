@@ -11,6 +11,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/gallery', express.static(path.join(__dirname, 'gallery')));
+app.use('/story', express.static(path.join(__dirname, 'story')));
 
 app.get('/api/gallery', (req, res) => {
     const galleryDir = path.join(__dirname, 'gallery');

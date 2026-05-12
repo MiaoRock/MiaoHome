@@ -15,8 +15,11 @@ async function loadGallery() {
             return;
         }
 
-        const htmlParts = images.map(file => `<img src="${API_BASE}/gallery/${encodeURIComponent(file)}" alt="" class="gallery-item">`);
-
+        const htmlParts = images.map(file => `
+            <a href="${API_BASE}/gallery/${encodeURIComponent(file)}" target="_blank">
+                <img src="${API_BASE}/gallery/${encodeURIComponent(file)}" alt="" class="gallery-item">
+            </a>
+        `);
         container.innerHTML = `<div class="gallery-grid">${htmlParts.join('')}</div>`;
 
     } catch (e) {
