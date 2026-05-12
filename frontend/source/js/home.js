@@ -1,9 +1,13 @@
+let API_BASE = '';
+if (window.location.hostname === 'localhost') {
+    API_BASE = 'http://localhost:3000';
+}
 async function loadGallery() {
     const container = document.getElementById('gallery');
-    container.innerHTML = ''; // 清空容器
+    container.innerHTML = '';
 
     try {
-        const res = await fetch('http://localhost:3000/api/gallery');
+        const res = await fetch(`${API_BASE}/api/gallery`);
         const images = await res.json();
 
         if (!images.length) {
@@ -11,9 +15,7 @@ async function loadGallery() {
             return;
         }
 
-        const htmlParts = images.map(file => {
-            return `<img src="http://localhost:3000/gallery/${file}" alt="" class="gallery-item">`;
-        });
+        const htmlParts = images.map(file => `<img src="${API_BASE}/gallery/${encodeURIComponent(file)}" alt="" class="gallery-item">`);
 
         container.innerHTML = `<div class="gallery-grid">${htmlParts.join('')}</div>`;
 
@@ -28,7 +30,7 @@ async function loadStory() {
     container.innerHTML = '';
 
     try {
-        const res = await fetch('http://localhost:3000/api/story');
+        const res = await fetch(`${API_BASE}/api/story`);
         const monthMap = await res.json();
 
         const months = Object.keys(monthMap).sort((a, b) => b.localeCompare(a));
