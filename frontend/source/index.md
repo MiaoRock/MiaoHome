@@ -70,13 +70,13 @@ comments: false
         </div>
     </div>
     <div class="middle-column">
-        <div class="gallery-wall">
-            {% home_gallery %}
+        <div class="gallery-wall" id="wall">
         </div>
     </div>
     <div class="right-column">
-        <div class="story-timeline">
-            {% home_story %}
+        <div class="story-timeline" id="timeline">
         </div>
     </div>
 </div>
+
+<script src="js/home.js"></script>

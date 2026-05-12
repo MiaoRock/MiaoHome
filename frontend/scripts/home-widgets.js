@@ -9,13 +9,13 @@ hexo.extend.tag.register('home_gallery', function () {
     try {
         files = fs.readdirSync(dir);
     } catch (e) {
-        return '<div>no images</div>'
+        return '<div>no gallery</div>'
     }
 
     const imageFiles = files
         .filter(f => /\.(png|jpg|jpeg|webp|gif)$/i.test(f))
     if (!imageFiles.length) {
-        return '<div>no images</div>'
+        return '<div>no gallery</div>'
     }
     const htmlParts = imageFiles.map(file => {
         return `<img src="/gallery/${file}" alt="">`
