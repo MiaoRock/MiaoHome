@@ -31,12 +31,9 @@ async function loadGallery() {
             const img = await loadImage(url);
 
             img.alt = '';
-            img.className = 'gallery-item';
 
             const a = document.createElement('a');
-            a.href = url;
-            a.target = '_blank';
-            a.rel = 'noopener noreferrer';
+            a.href = `/gallery/${encodeURIComponent(file)}`;
             a.appendChild(img);
 
             const ratio = img.naturalWidth ? img.naturalHeight / img.naturalWidth : 1;

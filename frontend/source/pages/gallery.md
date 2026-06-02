@@ -4,7 +4,7 @@ layout: page
 aside: false
 top_img: false
 comments: false
-permalink: /gallery.html
+permalink: /gallery/index.html
 ---
 
 <script src="/js/config.js"></script>
@@ -14,6 +14,7 @@ permalink: /gallery.html
     <div id="miao-content">
         <div id="miao-main">
             <div class="miao-card">
+                <div id="gallery-title"></div>
                 <img id="gallery-view" src="" alt="">
             </div>
         </div>
