@@ -3,3 +3,14 @@ display_mode: dark
 inject:
   head:
     - <link rel="stylesheet" href="/css/home.css">
+pjax:
+  enable: true
+
+nav:
+  logo:
+  display_title: true
+
+menu:
+  Home: /
+  Gallery: /gallery
+  Story: /story

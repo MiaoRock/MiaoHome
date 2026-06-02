@@ -1,35 +1,6 @@
-let API_BASE = '';
-if (window.location.hostname === 'localhost') {
-    API_BASE = 'http://localhost:3000';
-}
-async function loadGallery() {
-    const container = document.getElementById('gallery');
-    container.innerHTML = '';
-
-    try {
-        const res = await fetch(`${API_BASE}/api/gallery`);
-        const images = await res.json();
-
-        if (!images.length) {
-            container.innerHTML = '<div class="no-content">no gallery</div>';
-            return;
-        }
-
-        const htmlParts = images.map(file => `
-            <a href="${API_BASE}/gallery/${encodeURIComponent(file)}" target="_blank">
-                <img src="${API_BASE}/gallery/${encodeURIComponent(file)}" alt="" class="gallery-item">
-            </a>
-        `);
-        container.innerHTML = `<div class="gallery-grid">${htmlParts.join('')}</div>`;
-
-    } catch (e) {
-        container.innerHTML = '<div class="no-content">gallery error</div>';
-        console.error('加载图片失败', e);
-    }
-}
-
 async function loadStory() {
-    const container = document.getElementById('story');
+    const API_BASE = window.APP_CONFIG.API_BASE;
+    const container = document.getElementById('story-timeline');
     container.innerHTML = '';
 
     try {
@@ -80,5 +51,4 @@ async function loadStory() {
     }
 }
 
-loadGallery();
 loadStory();
