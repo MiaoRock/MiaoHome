@@ -45,6 +45,19 @@ async function loadStory() {
         htmlParts.push('</div>');
         container.innerHTML = htmlParts.join('');
 
+        if (container.dataset.page === 'story') {
+            const links = container.querySelectorAll('.article-sort-item-title');
+
+            links.forEach(function (link) {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    if (typeof window.loadStoryByUrl === 'function') {
+                        window.loadStoryByUrl(link.getAttribute('href'));
+                    }
+                });
+            });
+        }
     } catch (e) {
         container.innerHTML = '<div class="no-content">story error</div>';
         console.error('加载文章失败', e);

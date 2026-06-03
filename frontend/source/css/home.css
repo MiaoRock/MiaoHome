@@ -304,3 +304,39 @@
 .gallery-thumb:hover {
     transform: scale(1.04);
 }
+
+/* story page */
+#story-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 18px;
+}
+
+#story-view {
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.story-month {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 14px 0 8px;
+    opacity: 0.7;
+}
+
+.story-list-item {
+    cursor: pointer;
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.story-list-item:hover {
+    transform: scale(1.02);
+}
+
+.story-list-item.active {
+    font-weight: 600;
+    background-color: rgba(0, 0, 0, 0.06);
+}
