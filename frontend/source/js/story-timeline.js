@@ -14,50 +14,53 @@ async function loadStory() {
             return;
         }
 
-        const escapeHtml = str => String(str || '')
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
+        const titleDiv = container.appendChild(document.createElement('div'));
+        titleDiv.className = 'article-sort-title';
+        titleDiv.textContent = '今日';
 
-        const htmlParts = ['<div class="article-sort-title">今日</div>', '<div class="article-sort">'];
+        const sortDiv = container.appendChild(document.createElement('div'));
+        sortDiv.className = 'article-sort';
 
         months.forEach(month => {
             monthMap[month].forEach(item => {
-                const safeTitle = escapeHtml(item.title);
-                const safeDate = escapeHtml(item.dateText);
-                htmlParts.push(
-                    `<div class="article-sort-item no-article-cover">
-                        <div class="article-sort-item-info">
-                            <div class="article-sort-item-time">
-                                <i class="far fa-calendar-alt"></i>
-                                <time class="post-meta-date-created" datetime="${safeDate}">${safeDate}</time>
-                            </div>
-                            <a class="article-sort-item-title" href="${item.url}" title="${safeTitle}">${safeTitle}</a>
-                        </div>
-                    </div>`
-                );
+                const sortItem = sortDiv.appendChild(document.createElement('div'));
+                sortItem.className = 'article-sort-item no-article-cover';
+
+                const infoDiv = sortItem.appendChild(document.createElement('div'));
+                infoDiv.className = 'article-sort-item-info';
+
+                const timeDiv = infoDiv.appendChild(document.createElement('div'));
+                timeDiv.className = 'article-sort-item-time';
+
+                const icon = timeDiv.appendChild(document.createElement('i'));
+                icon.className = 'far fa-calendar-alt';
+
+                const time = timeDiv.appendChild(document.createElement('time'));
+                time.className = 'post-meta-date-created';
+                time.setAttribute('datetime', item.dateText || '');
+                time.textContent = item.dateText || '';
+
+                const link = infoDiv.appendChild(document.createElement('a'));
+                link.className = 'article-sort-item-title';
+                link.href = item.url || '#';
+                link.title = item.title || '';
+                link.textContent = item.title || '';
+
+                if (container.dataset.page === 'story') {
+                    link.addEventListener('click', function (event) {
+                        event.preventDefault();
+
+                        if (typeof window.loadStoryByUrl === 'function') {
+                            window.loadStoryByUrl(link.getAttribute('href'));
+                        }
+                    });
+                }
             });
-            htmlParts.push(`<div class="article-sort-item year">${escapeHtml(month)}</div>`);
+
+            const yearDiv = sortDiv.appendChild(document.createElement('div'));
+            yearDiv.className = 'article-sort-item year';
+            yearDiv.textContent = month;
         });
-
-        htmlParts.push('</div>');
-        container.innerHTML = htmlParts.join('');
-
-        if (container.dataset.page === 'story') {
-            const links = container.querySelectorAll('.article-sort-item-title');
-
-            links.forEach(function (link) {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
-
-                    if (typeof window.loadStoryByUrl === 'function') {
-                        window.loadStoryByUrl(link.getAttribute('href'));
-                    }
-                });
-            });
-        }
     } catch (e) {
         container.innerHTML = '<div class="no-content">story error</div>';
         console.error('加载文章失败', e);
