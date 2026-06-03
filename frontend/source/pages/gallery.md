@@ -14,8 +14,8 @@ permalink: /gallery/index.html
     <div id="miao-content">
         <div id="miao-main">
             <div class="miao-card">
-                <div id="gallery-title"></div>
                 <img id="gallery-view" src="" alt="">
+                <div id="gallery-title"></div>
             </div>
         </div>
         <div id="miao-side">

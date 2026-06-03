@@ -37,7 +37,7 @@
 
 /* 容器 */
 #miao-container {
-    width: 80vw;
+    width: 70vw;
     margin: 0 auto;
     padding-top: 1.2vw;
     display: grid;
@@ -279,6 +279,13 @@
     border-radius: 0.7vw;
 }
 
+#gallery-title {
+    text-align: right;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
 #gallery-list {
     display: flex;
     flex-direction: column;
@@ -297,6 +304,5 @@
 
 .gallery-thumb:hover {
     transform: scale(1.04);
-    filter: brightness(1.12);
-    box-shadow: 0 0.4vw 1vw rgba(0, 0, 0, 0.25);
+    filter: brightness(1.08);
 }

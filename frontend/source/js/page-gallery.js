@@ -5,6 +5,7 @@ async function loadGalleryPage() {
     const title = document.getElementById('gallery-title');
 
     list.innerHTML = '';
+    title.textContent = '';
 
     try {
         const res = await fetch(`${API_BASE}/api/gallery`);
@@ -17,6 +18,7 @@ async function loadGalleryPage() {
 
         const selectedFile = getGalleryFileFromPath();
         let selectedUrl = '';
+        let selectedTitle = '';
 
         images.forEach((file, index) => {
             const url = `${API_BASE}/gallery/${encodeURIComponent(file)}`;
@@ -28,6 +30,7 @@ async function loadGalleryPage() {
 
             img.addEventListener('click', function () {
                 preview.src = url;
+                title.textContent = getFileNameWithoutSuffix(file);
                 history.replaceState(null, '', `/gallery/${encodeURIComponent(file)}/`);
             });
 
@@ -35,18 +38,22 @@ async function loadGalleryPage() {
 
             if (selectedFile && selectedFile === file) {
                 selectedUrl = url;
+                selectedTitle = getFileNameWithoutSuffix(file);
             }
 
             if (!selectedFile && index === 0) {
                 selectedUrl = url;
+                selectedTitle = getFileNameWithoutSuffix(file);
             }
         });
 
         if (!selectedUrl) {
             selectedUrl = `${API_BASE}/gallery/${encodeURIComponent(images[0])}`;
+            selectedTitle = getFileNameWithoutSuffix(images[0]);
         }
 
         preview.src = selectedUrl;
+        title.textContent = selectedTitle;
     } catch (e) {
         list.innerHTML = '<div class="no-content">gallery error</div>';
         console.error('加载图片失败', e);
@@ -66,6 +73,10 @@ function getGalleryFileFromPath() {
         return '';
     }
     return decodeURIComponent(file);
+}
+
+function getFileNameWithoutSuffix(file) {
+    return file.replace(/\.[^/.]+$/, '');
 }
 
 loadGalleryPage();
