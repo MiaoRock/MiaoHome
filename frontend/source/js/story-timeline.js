@@ -5,14 +5,23 @@ async function loadStory() {
 
     try {
         const res = await fetch(`${API_BASE}/api/story`);
-        const monthMap = await res.json();
+        const stories = await res.json();
 
-        const months = Object.keys(monthMap).sort((a, b) => b.localeCompare(a));
-
-        if (!months.length) {
+        if (!stories.length) {
             storyTimeline.innerHTML = '<div class="no-content">no story</div>';
             return;
         }
+
+        const monthMap = stories.reduce((map, item) => {
+            const yearMonth = item.yearMonth;
+            if (!map[yearMonth]) {
+                map[yearMonth] = [];
+            }
+            map[yearMonth].push(item);
+            return map;
+        }, {});
+
+        const months = Object.keys(monthMap).sort((a, b) => b.localeCompare(a));
 
         const titleDiv = storyTimeline.appendChild(document.createElement('div'));
         titleDiv.className = 'article-sort-title';
@@ -41,10 +50,11 @@ async function loadStory() {
                 time.textContent = item.dateText || '';
 
                 const link = infoDiv.appendChild(document.createElement('a'));
+                const linkText = item.story + ' - ' + item.title;
                 link.className = 'article-sort-item-title';
                 link.href = item.url || '#';
-                link.title = item.title || '';
-                link.textContent = item.story + ' - ' + item.title;
+                link.title = linkText;
+                link.textContent = linkText;
 
                 if (storyTimeline.dataset.page === 'story') {
                     link.addEventListener('click', function (event) {
