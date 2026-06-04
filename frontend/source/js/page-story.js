@@ -43,7 +43,7 @@ async function loadStoryContent(story) {
     const title = document.getElementById('story-title');
     const view = document.getElementById('story-view');
 
-    title.textContent = story.title || '';
+    title.textContent = story.story + story.title || '';
     view.textContent = '';
 
     const mdUrl = getMarkdownUrl(story.url);

@@ -44,7 +44,7 @@ async function loadStory() {
                 link.className = 'article-sort-item-title';
                 link.href = item.url || '#';
                 link.title = item.title || '';
-                link.textContent = item.title || '';
+                link.textContent = item.story ? item.story + ' - ' + (item.title || '') : item.title || '';
 
                 if (container.dataset.page === 'story') {
                     link.addEventListener('click', function (event) {

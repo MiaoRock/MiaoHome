@@ -31,13 +31,6 @@ app.get('/api/story', (req, res) => {
     const storyDir = path.join(__dirname, 'story');
     const root = '/';
 
-    const escapeHtml = str => String(str || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-
     const parseFrontMatter = content => {
         const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
         const result = {};
@@ -58,10 +51,12 @@ app.get('/api/story', (req, res) => {
             const filePath = path.join(storyDir, file);
             const content = fs.readFileSync(filePath, 'utf8');
             const fm = parseFrontMatter(content);
+            const story = fm.story || '';
             const title = fm.title || file.replace(/\.md$/, '');
             const dateText = fm.date || '';
             const time = new Date(dateText).getTime();
             return {
+                story,
                 title,
                 dateText,
                 time: isNaN(time) ? 0 : time,
