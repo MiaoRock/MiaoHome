@@ -305,6 +305,27 @@
     transform: scale(1.04);
 }
 
+.gallery-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.gallery-modal-img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    user-select: none;
+}
+
 /* story page */
 #story-title {
     font-size: 22px;
