@@ -361,3 +361,11 @@
     font-weight: 600;
     background-color: rgba(0, 0, 0, 0.06);
 }
+
+#gallery-list,
+#story-timeline[data-page="story"] {
+    position: sticky;
+    top: calc(60px + 1.2vw);
+    max-height: calc(100vh - 60px - 1.2vw);
+    overflow-y: auto;
+}
