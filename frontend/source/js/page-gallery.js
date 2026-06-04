@@ -1,6 +1,6 @@
 async function loadGalleryPage() {
     const API_BASE = window.APP_CONFIG.API_BASE;
-    const preview = document.getElementById('gallery-view');
+    const view = document.getElementById('gallery-view');
     const list = document.getElementById('gallery-list');
     const title = document.getElementById('gallery-title');
 
@@ -17,43 +17,24 @@ async function loadGalleryPage() {
         }
 
         const selectedFile = getGalleryFileFromPath();
-        let selectedUrl = '';
-        let selectedTitle = '';
+        const targetFile = images.includes(selectedFile) ? selectedFile : images[0];
 
-        images.forEach((file, index) => {
+        images.forEach(file => {
             const url = `${API_BASE}/gallery/${encodeURIComponent(file)}`;
-
-            const img = document.createElement('img');
+            const img = list.appendChild(document.createElement('img'));
             img.src = url;
             img.alt = '';
             img.className = 'gallery-thumb';
 
             img.addEventListener('click', function () {
-                preview.src = url;
+                view.src = url;
                 title.textContent = getFileNameWithoutSuffix(file);
                 history.replaceState(null, '', `/gallery/${encodeURIComponent(file)}/`);
             });
-
-            list.appendChild(img);
-
-            if (selectedFile && selectedFile === file) {
-                selectedUrl = url;
-                selectedTitle = getFileNameWithoutSuffix(file);
-            }
-
-            if (!selectedFile && index === 0) {
-                selectedUrl = url;
-                selectedTitle = getFileNameWithoutSuffix(file);
-            }
         });
 
-        if (!selectedUrl) {
-            selectedUrl = `${API_BASE}/gallery/${encodeURIComponent(images[0])}`;
-            selectedTitle = getFileNameWithoutSuffix(images[0]);
-        }
-
-        preview.src = selectedUrl;
-        title.textContent = selectedTitle;
+        view.src = `${API_BASE}/gallery/${encodeURIComponent(targetFile)}`;
+        title.textContent = getFileNameWithoutSuffix(targetFile);
     } catch (e) {
         list.innerHTML = '<div class="no-content">gallery error</div>';
         console.error('加载图片失败', e);
@@ -67,8 +48,7 @@ function getGalleryFileFromPath() {
     if (!path.startsWith(prefix)) {
         return '';
     }
-    let file = path.substring(prefix.length);
-    file = file.replace(/\/+$/, '');
+    const file = path.substring(prefix.length).replace(/\/+$/, '');
     if (!file || file === 'index.html') {
         return '';
     }

@@ -1,5 +1,3 @@
-const API_BASE = window.APP_CONFIG.API_BASE;
-
 async function loadStoryPage() {
     const title = document.getElementById('story-title');
     const view = document.getElementById('story-view');
@@ -24,6 +22,7 @@ async function loadStoryPage() {
 }
 
 async function loadStoryContent(story) {
+    const API_BASE = window.APP_CONFIG.API_BASE;
     const title = document.getElementById('story-title');
     const view = document.getElementById('story-view');
 
@@ -43,6 +42,7 @@ async function loadStoryContent(story) {
 }
 
 async function getStories() {
+    const API_BASE = window.APP_CONFIG.API_BASE;
     const res = await fetch(`${API_BASE}/api/story`);
     return await res.json();
 }
