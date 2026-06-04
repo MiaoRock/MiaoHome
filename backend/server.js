@@ -67,13 +67,7 @@ app.get('/api/story', (req, res) => {
 
         const sortedList = timeline.filter(i => i.dateText).sort((a, b) => b.time - a.time);
 
-        const monthMap = sortedList.reduce((map, item) => {
-            if (!map[item.yearMonth]) map[item.yearMonth] = [];
-            map[item.yearMonth].push(item);
-            return map;
-        }, {});
-
-        res.json(monthMap);
+        res.json(sortedList);
     });
 });
 
