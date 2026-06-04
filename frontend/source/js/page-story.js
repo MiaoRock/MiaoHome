@@ -1,5 +1,6 @@
+const API_BASE = window.APP_CONFIG.API_BASE;
+
 async function loadStoryPage() {
-    const API_BASE = window.APP_CONFIG.API_BASE;
     const title = document.getElementById('story-title');
     const view = document.getElementById('story-view');
 
@@ -7,30 +8,14 @@ async function loadStoryPage() {
     view.textContent = '';
 
     try {
-        const res = await fetch(`${API_BASE}/api/story`);
-        const monthMap = await res.json();
-        const stories = [];
-
-        Object.keys(monthMap).forEach(function (month) {
-            monthMap[month].forEach(function (item) {
-                stories.push(item);
-            });
-        });
-
+        const stories = await getStories();
         if (!stories.length) {
             view.textContent = 'no story';
             return;
         }
-
-        const currentUrl = getCurrentStoryUrl();
-        let targetStory = stories[0];
-
-        stories.forEach(function (story) {
-            if (story.url === currentUrl) {
-                targetStory = story;
-            }
-        });
-
+        const path = window.location.pathname.replace(/\/?$/, '/');
+        const currentUrl = !path.startsWith('/story/') || path === '/story/' || path === '/story/index.html/' ? '' : path;
+        const targetStory = stories.find(story => story.url === currentUrl) || stories[0];
         await loadStoryContent(targetStory);
     } catch (e) {
         view.textContent = 'story error';
@@ -39,16 +24,14 @@ async function loadStoryPage() {
 }
 
 async function loadStoryContent(story) {
-    const API_BASE = window.APP_CONFIG.API_BASE;
     const title = document.getElementById('story-title');
     const view = document.getElementById('story-view');
 
-    title.textContent = story.story + story.title || '';
+    title.textContent = story.story + ' - ' + story.title;
     view.textContent = '';
 
-    const mdUrl = getMarkdownUrl(story.url);
+    const mdUrl = story.url.replace(/\/$/, '') + '.md';
     const res = await fetch(`${API_BASE}${mdUrl}`);
-
     if (!res.ok) {
         view.textContent = 'story load error';
         console.error('文章请求失败', `${API_BASE}${mdUrl}`, res.status);
@@ -56,61 +39,17 @@ async function loadStoryContent(story) {
     }
 
     const mdText = await res.text();
-    view.textContent = removeFrontMatter(mdText);
+    view.textContent = mdText.replace(/^---\r?\n[\s\S]*?\r?\n---/, '').trim();
 }
 
-function getCurrentStoryUrl() {
-    const path = window.location.pathname;
-
-    if (!path.startsWith('/story/')) {
-        return '';
-    }
-
-    if (path === '/story/' || path === '/story/index.html') {
-        return '';
-    }
-
-    if (path.endsWith('/')) {
-        return path;
-    }
-
-    return path + '/';
-}
-
-function getMarkdownUrl(url) {
-    let result = url || '';
-
-    if (result.endsWith('/')) {
-        result = result.substring(0, result.length - 1);
-    }
-
-    return result + '.md';
-}
-
-function removeFrontMatter(mdText) {
-    return mdText.replace(/^---\r?\n[\s\S]*?\r?\n---/, '').trim();
+async function getStories() {
+    const res = await fetch(`${API_BASE}/api/story`);
+    return await res.json();
 }
 
 window.loadStoryByUrl = async function (url) {
-    const API_BASE = window.APP_CONFIG.API_BASE;
-    const res = await fetch(`${API_BASE}/api/story`);
-    const monthMap = await res.json();
-    const stories = [];
-
-    Object.keys(monthMap).forEach(function (month) {
-        monthMap[month].forEach(function (item) {
-            stories.push(item);
-        });
-    });
-
-    let targetStory = null;
-
-    stories.forEach(function (story) {
-        if (story.url === url) {
-            targetStory = story;
-        }
-    });
-
+    const stories = await getStories();
+    const targetStory = stories.find(story => story.url === url);
     if (targetStory) {
         await loadStoryContent(targetStory);
         history.replaceState(null, '', targetStory.url);
