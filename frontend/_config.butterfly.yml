@@ -7,7 +7,7 @@ pjax:
   enable: true
 
 nav:
-  logo:
+  logo: /img/favicon.png
   display_title: true
 
 menu:
