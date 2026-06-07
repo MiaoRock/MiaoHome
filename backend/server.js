@@ -71,6 +71,6 @@ app.get('/api/story', (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`后端 API 已启动: http://localhost:${PORT}`);
+app.listen(PORT, '127.0.0.1', () => {
+    console.log(`Server running on http://127.0.0.1:${PORT}`);
 });
