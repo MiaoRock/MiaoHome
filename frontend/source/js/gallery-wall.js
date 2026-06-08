@@ -1,14 +1,14 @@
 async function loadGallery() {
     const API_BASE = window.APP_CONFIG.API_BASE;
-    const container = document.getElementById('gallery-wall');
-    container.innerHTML = '';
+    const galleryWall = document.getElementById('gallery-wall');
+    galleryWall.innerHTML = '';
 
     try {
         const res = await fetch(`${API_BASE}/api/gallery`);
         const images = await res.json();
 
         if (!images.length) {
-            container.innerHTML = '<div class="no-content">no gallery</div>';
+            galleryWall.innerHTML = '<div class="no-content">no gallery</div>';
             return;
         }
 
@@ -50,10 +50,19 @@ async function loadGallery() {
             columnHeights[targetIndex] += item.ratio;
         });
 
-        container.appendChild(grid);
+        galleryWall.appendChild(grid);
 
+        if (window.pjax) {
+            window.pjax.refresh(galleryWall);
+        } else {
+            window.addEventListener('load', function () {
+                if (window.pjax) {
+                    window.pjax.refresh(galleryWall);
+                }
+            }, { once: true });
+        }
     } catch (e) {
-        container.innerHTML = '<div class="no-content">gallery error</div>';
+        galleryWall.innerHTML = '<div class="no-content">gallery error</div>';
         console.error('加载图片失败', e);
     }
 }

@@ -3,22 +3,22 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Miao Home
-subtitle: ''
-description: ''
+title: Rock Miao
+subtitle: Miao Home
+description: Rock Miao's Home
 keywords:
 author: Rock Miao
 language: zh-CN
-timezone: ''
+timezone: Asia/Singapore
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: http://example.com
+url: https://rockmiao.com
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
-  trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
-  trailing_html: true # Set to false to remove trailing '.html' from permalinks
+  trailing_index: false # Set to false to remove trailing 'index.html' from permalinks
+  trailing_html: false # Set to false to remove trailing '.html' from permalinks
 
 # Directory
 source_dir: source

@@ -1,16 +1,46 @@
 display_mode: dark
 
+favicon: /img/favicon.png
+
+avatar:
+  img: /img/favicon.png
+  effect: false
+
 inject:
   head:
     - <link rel="stylesheet" href="/css/home.css">
+
 pjax:
   enable: true
 
 nav:
   logo: /img/favicon.png
   display_title: true
+  display_post_title: false
+  fixed: false
 
 menu:
   Home: /
-  Gallery: /gallery
-  Story: /story
+  Gallery: /gallery/
+  Story: /story/
+
+aside:
+  enable: false
+
+busuanzi:
+  site_uv: false
+  site_pv: false
+  page_pv: false
+
+footer:
+  owner:
+    enable: true
+    since: 1989
+  copyright:
+    enable: true
+  custom_text:
+
+error_404:
+  enable: true
+  subtitle: 'Page Not Found'
+  background:

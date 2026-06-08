@@ -70,6 +70,16 @@ async function loadStory() {
             yearDiv.className = 'article-sort-item year';
             yearDiv.textContent = month;
         });
+
+        if (window.pjax) {
+            window.pjax.refresh(storyTimeline);
+        } else {
+            window.addEventListener('load', function () {
+                if (window.pjax) {
+                    window.pjax.refresh(storyTimeline);
+                }
+            }, { once: true });
+        }
     } catch (e) {
         storyTimeline.innerHTML = '<div class="no-content">story error</div>';
         console.error('加载文章失败', e);
