@@ -78,7 +78,7 @@ async function loadStory() {
                 if (window.pjax) {
                     window.pjax.refresh(storyTimeline);
                 }
-            }, { once: true });
+            }, {once: true});
         }
     } catch (e) {
         storyTimeline.innerHTML = '<div class="no-content">story error</div>';
