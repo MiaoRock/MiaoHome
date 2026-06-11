@@ -9,6 +9,8 @@ avatar:
 inject:
   head:
     - <link rel="stylesheet" href="/css/home.css">
+  bottom:
+    - <script src="/js/bg.js"></script>
 
 pjax:
   enable: true
@@ -23,6 +25,7 @@ menu:
   Home: /
   Gallery: /gallery/
   Story: /story/
+  Admin: /admin/
 
 aside:
   enable: false
