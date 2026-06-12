@@ -28,9 +28,8 @@ async function loadGalleryPage() {
             const img = list.appendChild(document.createElement('img'));
             img.src = url;
             img.alt = '';
-            img.className = 'gallery-thumb';
 
-            img.addEventListener('click', function () {
+            img.addEventListener('click', () => {
                 view.src = url;
                 title.textContent = getFileNameWithoutSuffix(file);
                 history.replaceState(null, '', `/gallery/${encodeURIComponent(file)}/`);

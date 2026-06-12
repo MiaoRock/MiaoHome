@@ -82,9 +82,8 @@ function createGalleryAddCard() {
     const buttonCard = document.createElement('button');
     buttonCard.type = 'button';
     buttonCard.className = 'gallery-add-card';
-    buttonCard.innerHTML = `
-        <div class="gallery-add-icon">+</div>
-    `;
+    const icon = buttonCard.appendChild(document.createElement('div'));
+    icon.className = 'gallery-add-icon';
 
     buttonCard.addEventListener('click', () => {
         const modal = getGalleryAdd();
