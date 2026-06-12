@@ -47,13 +47,13 @@ const galleryStorage = multer.diskStorage({
     }
 });
 
-const galleryUpload = multer({
+const galleryAdd = multer({
     storage: galleryStorage, limits: {
         fileSize: 50 * 1024 * 1024
     }
 });
 
-app.post('/api/admin/gallery/upload', galleryUpload.array('files', 20), async (req, res) => {
+app.post('/api/admin/gallery/add', galleryAdd.array('files', 20), async (req, res) => {
     await Promise.all(req.files.map(file => createThumb(file.filename)));
     res.json({
         files: req.files.map(file => ({

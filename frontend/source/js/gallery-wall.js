@@ -21,7 +21,7 @@ async function loadGallery() {
         }
 
         if (galleryWall.dataset.page === 'admin') {
-            columns[0].appendChild(createGalleryAddCard(API_BASE));
+            columns[0].appendChild(createGalleryAddCard());
             columnHeights[0] += 1;
         }
 
@@ -54,11 +54,11 @@ async function loadGallery() {
         if (window.pjax) {
             window.pjax.refresh(galleryWall);
         } else {
-            window.addEventListener('load', function () {
+            window.addEventListener('load', () => {
                 if (window.pjax) {
                     window.pjax.refresh(galleryWall);
                 }
-            }, { once: true });
+            }, {once: true});
         }
     } catch (e) {
         galleryWall.innerHTML = '<div class="no-content">gallery error</div>';
@@ -78,132 +78,115 @@ function loadImage(src, fbSrc) {
     });
 }
 
-function createGalleryAddCard(API_BASE) {
-    const card = document.createElement('button');
-    card.type = 'button';
-    card.className = 'gallery-add-card';
-
-    card.innerHTML = `
+function createGalleryAddCard() {
+    const buttonCard = document.createElement('button');
+    buttonCard.type = 'button';
+    buttonCard.className = 'gallery-add-card';
+    buttonCard.innerHTML = `
         <div class="gallery-add-icon">+</div>
-        <div class="gallery-add-title">上传图片</div>
-        <div class="gallery-add-desc">点击选择图片</div>
     `;
 
-    card.addEventListener('click', function () {
-        const modal = ensureGalleryUploadModal(API_BASE);
+    buttonCard.addEventListener('click', () => {
+        const modal = getGalleryAdd();
         modal.classList.add('show');
     });
 
-    return card;
+    return buttonCard;
 }
 
-function ensureGalleryUploadModal(API_BASE) {
-    let modal = document.getElementById('gallery-upload-modal');
+function getGalleryAdd() {
+    const API_BASE = window.APP_CONFIG.API_BASE;
+    const existsModal = document.getElementById('gallery-add');
+    if (existsModal) return existsModal;
 
-    if (modal) {
-        return modal;
-    }
+    const modal = document.body.appendChild(document.createElement('div'));
+    modal.id = 'gallery-add';
 
-    modal = document.createElement('div');
-    modal.id = 'gallery-upload-modal';
-    modal.className = 'gallery-upload-modal';
+    const show = modal.appendChild(document.createElement('div'));
+    show.className = 'gallery-add-show';
 
-    modal.innerHTML = `
-        <div class="gallery-upload-dialog">
-            <div class="gallery-upload-header">
-                <div>
-                    <div class="gallery-upload-title">上传图片</div>
-                    <div class="gallery-upload-subtitle">选择图片后上传到图片墙</div>
-                </div>
-                <button type="button" class="gallery-upload-close">×</button>
-            </div>
+    const selectLabel = show.appendChild(document.createElement('label'));
+    selectLabel.className = 'gallery-add-select';
 
-            <label class="gallery-upload-select">
-                <input id="gallery-upload-file" type="file" accept="image/*" multiple>
-                <div class="gallery-upload-select-icon">＋</div>
-                <div class="gallery-upload-select-text">点击选择图片</div>
-                <div class="gallery-upload-select-desc">支持 JPG / PNG / WEBP，多选上传</div>
-            </label>
+    const fileInput = selectLabel.appendChild(document.createElement('input'));
+    fileInput.id = 'gallery-add-file';
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.multiple = true;
 
-            <div class="gallery-upload-footer">
-                <div id="gallery-upload-info" class="gallery-upload-info">未选择图片</div>
-                <button id="gallery-upload-submit" type="button" class="gallery-upload-submit">上传</button>
-            </div>
+    const selectIcon = selectLabel.appendChild(document.createElement('div'));
+    selectIcon.className = 'gallery-add-select-icon';
+    selectIcon.textContent = '＋';
 
-            <div id="gallery-upload-message" class="gallery-upload-message"></div>
-        </div>
-    `;
+    const footer = show.appendChild(document.createElement('div'));
+    footer.className = 'gallery-add-footer';
 
-    document.body.appendChild(modal);
+    const info = footer.appendChild(document.createElement('div'));
+    info.id = 'gallery-add-info';
+    info.textContent = '未选择图片';
 
-    const closeBtn = modal.querySelector('.gallery-upload-close');
-    const fileInput = modal.querySelector('#gallery-upload-file');
-    const info = modal.querySelector('#gallery-upload-info');
-    const submitBtn = modal.querySelector('#gallery-upload-submit');
-    const message = modal.querySelector('#gallery-upload-message');
+    const submitBtn = footer.appendChild(document.createElement('button'));
+    submitBtn.id = 'gallery-add-submit';
+    submitBtn.type = 'button';
+    submitBtn.textContent = '上传';
 
-    closeBtn.addEventListener('click', function () {
-        modal.classList.remove('show');
-    });
+    const closeBtn = footer.appendChild(document.createElement('button'));
+    closeBtn.id = 'gallery-add-close';
+    closeBtn.type = 'button';
+    closeBtn.textContent = '关闭';
 
-    modal.addEventListener('click', function (e) {
-        if (e.target === modal) {
-            modal.classList.remove('show');
-        }
-    });
+    const message = show.appendChild(document.createElement('div'));
+    message.id = 'gallery-add-message';
 
-    fileInput.addEventListener('change', function () {
+    // 关闭按钮
+    closeBtn.addEventListener('click', () => modal.classList.remove('show'));
+
+    // 文件选择
+    fileInput.addEventListener('change', () => {
+        info.textContent = '';
         if (!fileInput.files.length) {
-            info.innerHTML = '未选择图片';
+            info.textContent = '未选择图片';
             return;
         }
-
-        info.innerHTML = '已选择 ' + fileInput.files.length + ' 张图片';
-    });
-
-    submitBtn.addEventListener('click', async function () {
-        if (!fileInput.files.length) {
-            message.innerHTML = '请选择图片';
-            return;
-        }
-
-        const formData = new FormData();
-
-        Array.from(fileInput.files).forEach(function (file) {
-            formData.append('files', file);
+        Array.from(fileInput.files).forEach(file => {
+            const fileName = info.appendChild(document.createElement('div'));
+            fileName.textContent = file.name;
+            fileName.title = file.name;
         });
+    });
+
+    // 上传
+    submitBtn.addEventListener('click', async () => {
+        if (!fileInput.files.length) {
+            message.textContent = '请选择图片';
+            return;
+        }
+        const formData = new FormData();
+        Array.from(fileInput.files).forEach(file => formData.append('files', file));
 
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '上传中...';
-        message.innerHTML = '';
+        submitBtn.textContent = '上传中...';
+        message.textContent = '';
 
         try {
-            const res = await fetch(`${API_BASE}/api/admin/gallery/upload`, {
-                method: 'POST', body: formData
-            });
-
+            const res = await fetch(API_BASE + '/api/admin/gallery/add', { method: 'POST', body: formData });
             if (!res.ok) {
-                message.innerHTML = '上传失败';
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '上传';
+                message.textContent = '上传失败';
                 return;
             }
 
-            await res.json();
-
             fileInput.value = '';
-            info.innerHTML = '未选择图片';
-            message.innerHTML = '上传成功';
-
+            info.textContent = '未选择图片';
+            message.textContent = '上传成功';
             modal.classList.remove('show');
             await loadGallery();
         } catch (e) {
-            message.innerHTML = '上传失败';
+            message.textContent = '上传失败';
             console.error('上传图片失败', e);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = '上传';
         }
-
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '上传';
     });
 
     return modal;
