@@ -20,16 +20,14 @@ async function loadGallery() {
             columns.push(col);
         }
 
-        const columnWidth = columns[0].clientWidth;
-        const gap = parseFloat( getComputedStyle(columns[0]).rowGap ) || 0;
-        const gapRatio = columnWidth ? gap / columnWidth : 0;
+        const gap = parseFloat(getComputedStyle(columns[0]).rowGap) || 0;
 
         if (galleryWall.dataset.page === 'admin') {
             const res = await fetch('/static/gallery/add-card.html');
             columns[0].innerHTML = await res.text()
             const addCard = columns[0].firstElementChild;
             const rect = addCard.getBoundingClientRect();
-            columnHeights[0] += rect.width ? rect.height / rect.width : 0 + gapRatio;
+            columnHeights[0] += rect.height + gap;
         }
 
         if (!images.length) {
@@ -46,16 +44,17 @@ async function loadGallery() {
             const a = document.createElement('a');
             a.href = `/gallery/${encodeURIComponent(file)}`;
             a.appendChild(img);
-            const ratio = img.naturalWidth ? img.naturalHeight / img.naturalWidth : 1;
+
             return {
-                element: a, ratio
+                element: a
             };
         }));
 
         items.forEach(item => {
             const targetIndex = columnHeights.indexOf(Math.min(...columnHeights));
             columns[targetIndex].appendChild(item.element);
-            columnHeights[targetIndex] += item.ratio + gapRatio;
+            const rect = item.element.getBoundingClientRect();
+            columnHeights[targetIndex] += rect.height + gap;
         });
 
         if (window.pjax) {
@@ -119,13 +118,11 @@ async function loadGalleryAdd() {
         });
 
         submitBtn.disabled = true;
-        submitBtn.textContent = '上传中...';
         message.textContent = '上传中...';
 
         try {
             const res = await fetch(API_BASE + '/api/admin/gallery/add', {
-                method: 'POST',
-                body: formData
+                method: 'POST', body: formData
             });
 
             if (!res.ok) {
@@ -144,7 +141,6 @@ async function loadGalleryAdd() {
             console.error('上传图片失败', e);
         } finally {
             submitBtn.disabled = false;
-            submitBtn.textContent = '上传';
         }
     });
 }

@@ -460,11 +460,6 @@
             linear-gradient(currentColor, currentColor) center / 0.18vw 100% no-repeat;
 }
 
-.gallery-add-select::after {
-    content: "选择图片";
-    font-size: 0.9vw;
-}
-
 .gallery-add-footer {
     display: grid;
     grid-template-columns: 1fr auto auto;

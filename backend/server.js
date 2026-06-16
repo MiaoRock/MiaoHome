@@ -20,12 +20,22 @@ app.use('/gallery', express.static(galleryDir));
 app.use('/thumbs', express.static(thumbDir));
 app.use('/story', express.static(storyDir));
 
-app.get('/api/gallery', (req, res) => {
-    fs.readdir(galleryDir, (err, files) => {
-        if (err) return res.status(500).json({error: 'no gallery'});
-
-        res.json(files.filter(f => !f.startsWith('.')));
-    });
+app.get('/api/gallery', async (req, res) => {
+    try {
+        const files = await fs.promises.readdir(galleryDir);
+        const fileList = await Promise.all(files
+            .filter(file => !file.startsWith('.'))
+            .map(async file => {
+                const stat = await fs.promises.stat(path.join(galleryDir, file));
+                return {
+                    name: file, time: stat.mtimeMs
+                };
+            }));
+        fileList.sort((a, b) => b.time - a.time);
+        res.json(fileList.map(file => file.name));
+    } catch (err) {
+        res.status(500).json({error: 'no gallery'});
+    }
 });
 
 const createThumb = async fileName => {
