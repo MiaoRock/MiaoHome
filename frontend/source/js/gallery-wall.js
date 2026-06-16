@@ -20,9 +20,16 @@ async function loadGallery() {
             columns.push(col);
         }
 
+        const columnWidth = columns[0].clientWidth;
+        const gap = parseFloat( getComputedStyle(columns[0]).rowGap ) || 0;
+        const gapRatio = columnWidth ? gap / columnWidth : 0;
+
         if (galleryWall.dataset.page === 'admin') {
-            columns[0].appendChild(createGalleryAddCard());
-            columnHeights[0] += 1;
+            const res = await fetch('/static/gallery/add-card.html');
+            columns[0].innerHTML = await res.text()
+            const addCard = columns[0].firstElementChild;
+            const rect = addCard.getBoundingClientRect();
+            columnHeights[0] += rect.width ? rect.height / rect.width : 0 + gapRatio;
         }
 
         if (!images.length) {
@@ -48,7 +55,7 @@ async function loadGallery() {
         items.forEach(item => {
             const targetIndex = columnHeights.indexOf(Math.min(...columnHeights));
             columns[targetIndex].appendChild(item.element);
-            columnHeights[targetIndex] += item.ratio;
+            columnHeights[targetIndex] += item.ratio + gapRatio;
         });
 
         if (window.pjax) {
@@ -78,69 +85,18 @@ function loadImage(src, fbSrc) {
     });
 }
 
-function createGalleryAddCard() {
-    const buttonCard = document.createElement('button');
-    buttonCard.type = 'button';
-    buttonCard.className = 'gallery-add-card';
-    const icon = buttonCard.appendChild(document.createElement('div'));
-    icon.className = 'gallery-add-icon';
-
-    buttonCard.addEventListener('click', () => {
-        const modal = getGalleryAdd();
-        modal.classList.add('show');
-    });
-
-    return buttonCard;
-}
-
-function getGalleryAdd() {
+async function loadGalleryAdd() {
     const API_BASE = window.APP_CONFIG.API_BASE;
-    const existsModal = document.getElementById('gallery-add');
-    if (existsModal) return existsModal;
 
-    const modal = document.body.appendChild(document.createElement('div'));
-    modal.id = 'gallery-add';
+    const modal = document.getElementById('gallery-add');
+    const res = await fetch('/static/gallery/add.html');
+    modal.innerHTML = await res.text();
 
-    const show = modal.appendChild(document.createElement('div'));
-    show.className = 'gallery-add-show';
+    const fileInput = document.getElementById('gallery-add-file');
+    const info = document.getElementById('gallery-add-info');
+    const submitBtn = document.getElementById('gallery-add-submit');
+    const message = document.getElementById('gallery-add-message');
 
-    const selectLabel = show.appendChild(document.createElement('label'));
-    selectLabel.className = 'gallery-add-select';
-
-    const fileInput = selectLabel.appendChild(document.createElement('input'));
-    fileInput.id = 'gallery-add-file';
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.multiple = true;
-
-    const selectIcon = selectLabel.appendChild(document.createElement('div'));
-    selectIcon.className = 'gallery-add-select-icon';
-    selectIcon.textContent = '＋';
-
-    const footer = show.appendChild(document.createElement('div'));
-    footer.className = 'gallery-add-footer';
-
-    const info = footer.appendChild(document.createElement('div'));
-    info.id = 'gallery-add-info';
-    info.textContent = '未选择图片';
-
-    const submitBtn = footer.appendChild(document.createElement('button'));
-    submitBtn.id = 'gallery-add-submit';
-    submitBtn.type = 'button';
-    submitBtn.textContent = '上传';
-
-    const closeBtn = footer.appendChild(document.createElement('button'));
-    closeBtn.id = 'gallery-add-close';
-    closeBtn.type = 'button';
-    closeBtn.textContent = '关闭';
-
-    const message = show.appendChild(document.createElement('div'));
-    message.id = 'gallery-add-message';
-
-    // 关闭按钮
-    closeBtn.addEventListener('click', () => modal.classList.remove('show'));
-
-    // 文件选择
     fileInput.addEventListener('change', () => {
         info.textContent = '';
         if (!fileInput.files.length) {
@@ -148,27 +104,30 @@ function getGalleryAdd() {
             return;
         }
         Array.from(fileInput.files).forEach(file => {
-            const fileName = info.appendChild(document.createElement('div'));
-            fileName.textContent = file.name;
-            fileName.title = file.name;
+            info.textContent += file.name + ' ';
         });
     });
 
-    // 上传
     submitBtn.addEventListener('click', async () => {
         if (!fileInput.files.length) {
             message.textContent = '请选择图片';
             return;
         }
         const formData = new FormData();
-        Array.from(fileInput.files).forEach(file => formData.append('files', file));
+        Array.from(fileInput.files).forEach(file => {
+            formData.append('files', file);
+        });
 
         submitBtn.disabled = true;
         submitBtn.textContent = '上传中...';
-        message.textContent = '';
+        message.textContent = '上传中...';
 
         try {
-            const res = await fetch(API_BASE + '/api/admin/gallery/add', { method: 'POST', body: formData });
+            const res = await fetch(API_BASE + '/api/admin/gallery/add', {
+                method: 'POST',
+                body: formData
+            });
+
             if (!res.ok) {
                 message.textContent = '上传失败';
                 return;
@@ -178,6 +137,7 @@ function getGalleryAdd() {
             info.textContent = '未选择图片';
             message.textContent = '上传成功';
             modal.classList.remove('show');
+
             await loadGallery();
         } catch (e) {
             message.textContent = '上传失败';
@@ -187,8 +147,7 @@ function getGalleryAdd() {
             submitBtn.textContent = '上传';
         }
     });
-
-    return modal;
 }
 
+loadGalleryAdd();
 loadGallery();

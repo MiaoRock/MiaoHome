@@ -266,7 +266,7 @@
 }
 
 .gallery-col img,
-.gallery-add-card {
+.gallery-col button {
     width: 100%;
     border-radius: 0.7vw;
     margin: 0;
@@ -278,7 +278,7 @@
     display: block;
 }
 
-.gallery-add-card {
+.gallery-col button {
     height: 7.5vw;
     border: 3px dashed #777;
     background: rgba(128, 128, 128, 0.65);
@@ -295,7 +295,7 @@
 }
 
 .gallery-col img:hover,
-.gallery-add-card:hover {
+.gallery-col button:hover {
     transform: scale(1.04);
 }
 
@@ -421,7 +421,6 @@
     display: none;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.42);
     z-index: 9999;
 }
 
@@ -429,21 +428,16 @@
     display: flex;
 }
 
-.gallery-add-show {
-    width: 34vw;
-    max-width: 92vw;
-    padding: 1.3vw;
-    border-radius: 1vw;
-    background: rgba(255, 255, 255, 0.96);
-    box-shadow: 0 1vw 3vw rgba(0, 0, 0, 0.22);
-}
-
 .gallery-add-select {
-    display: block;
-    padding: 2vw 1vw;
-    border: 1px dashed rgba(120, 140, 180, 0.7);
-    border-radius: 0.9vw;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7vw;
+    height: 3.2vw;
+    min-height: 46px;
+    padding: 0 1vw;
+    border: 1px dashed rgba(120, 140, 180, 0.65);
+    border-radius: 0.8vw;
     cursor: pointer;
     background: rgba(80, 130, 220, 0.06);
 }
@@ -456,46 +450,81 @@
     display: none;
 }
 
-.gallery-upload-select-icon {
-    font-size: 2vw;
-    line-height: 1;
+.gallery-add-select-icon {
+    width: 1.8vw;
+    height: 1.8vw;
+    min-width: 26px;
+    min-height: 26px;
+    background:
+            linear-gradient(currentColor, currentColor) center / 100% 0.18vw no-repeat,
+            linear-gradient(currentColor, currentColor) center / 0.18vw 100% no-repeat;
+}
+
+.gallery-add-select::after {
+    content: "选择图片";
+    font-size: 0.9vw;
 }
 
 .gallery-add-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 1vw;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 0.7vw;
+    align-items: end;
+    margin-top: 0.8vw;
 }
 
 #gallery-add-info {
+    min-height: 2.3vw;
+    max-height: 5.5vw;
+    padding: 0.65vw 0.75vw;
+    border-radius: 0.7vw;
+    background: rgba(0, 0, 0, 0.05);
     font-size: 0.86vw;
-    opacity: 0.75;
+    overflow-y: auto;
 }
 
-.gallery-add-submit {
+#gallery-add-info div {
+    line-height: 1.6;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#gallery-add-submit,
+#gallery-add-close {
     border: 0;
     border-radius: 0.6vw;
-    padding: 0.55vw 1.2vw;
-    background: #4f8cff;
-    color: #fff;
+    padding: 0.55vw 1.15vw;
     cursor: pointer;
     font-size: 0.88vw;
+    white-space: nowrap;
 }
 
-.gallery-add-submit:hover {
+#gallery-add-submit {
+    background: #4f8cff;
+}
+
+#gallery-add-submit:hover {
     background: #3478f6;
 }
 
-.gallery-add-submit:disabled {
+#gallery-add-submit:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
-.gallery-add-message {
-    margin-top: 0.8vw;
+#gallery-add-close {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+#gallery-add-close:hover {
+    background: rgba(0, 0, 0, 0.14);
+}
+
+#gallery-add-message {
+    min-height: 1.2em;
+    margin-top: 0.7vw;
     font-size: 0.86vw;
-    color: #4f8cff;
 }
 
 #miao-bg {

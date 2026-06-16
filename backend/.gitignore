@@ -10,3 +10,5 @@ public/
 !/story/.gitkeep
 /gallery/*
 !/gallery/.gitkeep
+/thumbs/*
+!/thumbs/.gitkeep

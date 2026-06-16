@@ -14,6 +14,7 @@ permalink: /admin/index.html
     <div id="miao-content">
         <div id="miao-main">
             <div id="gallery-wall" class="miao-card" data-page="admin"></div>
+            <div id="gallery-add"></div>
             <script src="/js/gallery-wall.js"></script>
         </div>
         <div id="miao-side">

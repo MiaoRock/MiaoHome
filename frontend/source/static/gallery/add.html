@@ -1,0 +1,17 @@
+---
+layout: false
+---
+<div class="miao-card gallery-add-card">
+    <div class="gallery-add-body">
+        <label class="gallery-add-select" for="gallery-add-file">
+            <input id="gallery-add-file" type="file" accept="image/*" multiple>
+            <div class="gallery-add-select-icon"></div>
+        </label>
+        <div id="gallery-add-info">未选择图片</div>
+    </div>
+    <div class="gallery-add-footer">
+        <button id="gallery-add-submit" type="button">上传</button>
+        <button id="gallery-add-close" type="button" onclick="document.getElementById('gallery-add').classList.remove('show')">关闭</button>
+    </div>
+    <div id="gallery-add-message"></div>
+</div>
