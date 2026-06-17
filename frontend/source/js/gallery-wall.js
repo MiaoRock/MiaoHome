@@ -94,6 +94,7 @@ async function loadGalleryAdd() {
     const fileInput = document.getElementById('gallery-add-file');
     const info = document.getElementById('gallery-add-info');
     const submitBtn = document.getElementById('gallery-add-submit');
+    const closeBtn = document.getElementById('gallery-add-close');
     const message = document.getElementById('gallery-add-message');
 
     fileInput.addEventListener('change', () => {
@@ -105,6 +106,16 @@ async function loadGalleryAdd() {
         Array.from(fileInput.files).forEach(file => {
             info.textContent += file.name + ' ';
         });
+        info.scrollLeft = 0;
+    });
+
+    closeBtn.addEventListener('click', () => {
+        fileInput.value = '';
+        info.textContent = '未选择图片';
+        info.scrollLeft = 0;
+        message.textContent = '';
+        submitBtn.disabled = false;
+        modal.classList.remove('show');
     });
 
     submitBtn.addEventListener('click', async () => {
@@ -118,6 +129,7 @@ async function loadGalleryAdd() {
         });
 
         submitBtn.disabled = true;
+        closeBtn.disabled = true;
         message.textContent = '上传中...';
 
         try {
@@ -141,6 +153,7 @@ async function loadGalleryAdd() {
             console.error('上传图片失败', e);
         } finally {
             submitBtn.disabled = false;
+            closeBtn.disabled = false;
         }
     });
 }
