@@ -81,7 +81,9 @@ async function loadStoryAdd() {
     modal.innerHTML = await res.text();
 
     const storyInput = document.getElementById('story-add-story');
+    const storySubInput = document.getElementById('story-add-story-sub');
     const titleInput = document.getElementById('story-add-title');
+    const titleSubInput = document.getElementById('story-add-title-sub');
     const dateInput = document.getElementById('story-add-date');
     const contentInput = document.getElementById('story-add-content');
     const submitBtn = document.getElementById('story-add-submit');
@@ -91,20 +93,26 @@ async function loadStoryAdd() {
     closeBtn.addEventListener('click', () => {
         storyInput.value = '';
         titleInput.value = '';
-        dateInput.value = '';
+        dateInput.value = getToday();
         contentInput.value = '';
         message.textContent = '';
         modal.classList.remove('show');
     });
     submitBtn.addEventListener('click', async () => {
-        const story = storyInput.value.trim();
-        const title = titleInput.value.trim();
-        const date = dateInput.value;
-        const content = contentInput.value.trim();
-        if (!story || !title || !date || !content) {
+        const storyMain = storyInput.value.trim();
+        const storySub = storySubInput.value.trim();
+        const titleMain = titleInput.value.trim();
+        const titleSub = titleSubInput.value.trim();
+        if (!storyMain || !titleMain || !date || !content) {
             message.textContent = '请填写完整内容';
             return;
         }
+        const story = storySub ? `${storyMain} - ${storySub}` : storyMain;
+        const title = titleSub ? `${titleMain} - ${titleSub}` : titleMain;
+        const fileName = `${storyMain}-${titleMain}.md`;
+        const date = dateInput.value;
+        const content = contentInput.value.trim();
+
         submitBtn.disabled = true;
         closeBtn.disabled = true;
         message.textContent = '保存中...';
@@ -112,7 +120,7 @@ async function loadStoryAdd() {
             const res = await fetch(API_BASE + '/api/admin/story/add', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({story, title, date, content})
+                body: JSON.stringify({story, title, date, content, fileName})
             });
             if (!res.ok) {
                 message.textContent = '保存失败';

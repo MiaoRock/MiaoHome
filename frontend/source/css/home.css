@@ -529,17 +529,17 @@
 
 .story-add-body input,
 .story-add-body textarea {
-    width: 30vw;
+    width: 45vw;
     box-sizing: border-box;
     font-size: 1vw;
 }
 
 .story-add-body textarea {
-    height: 50vh;
+    height: 45vh;
     resize: vertical;
 }
 
-#story-add input::placeholder,
+.story-add-body input::placeholder,
 .story-add-body textarea::placeholder {
     font-size: 1vw;
     color: rgb(117, 117, 117);

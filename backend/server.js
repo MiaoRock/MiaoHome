@@ -118,8 +118,7 @@ app.get('/api/story', (req, res) => {
 
 app.post('/api/admin/story/add', async (req, res) => {
     try {
-        const {story, title, date, content} = req.body;
-        const fileName = `${story}-${title}.md`;
+        const {story, title, date, content, fileName} = req.body;
         const filePath = path.join(storyDir, fileName);
         const markdown = `---\nstory: ${story}\ntitle: ${title}\ndate: ${date}\n---\n\n${content}`;
         await fs.promises.writeFile(filePath, markdown, 'utf8');
