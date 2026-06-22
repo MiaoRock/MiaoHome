@@ -103,6 +103,8 @@ async function loadStoryAdd() {
         const storySub = storySubInput.value.trim();
         const titleMain = titleInput.value.trim();
         const titleSub = titleSubInput.value.trim();
+        const date = dateInput.value;
+        const content = contentInput.value.trim();
         if (!storyMain || !titleMain || !date || !content) {
             message.textContent = '请填写完整内容';
             return;
@@ -110,8 +112,6 @@ async function loadStoryAdd() {
         const story = storySub ? `${storyMain} - ${storySub}` : storyMain;
         const title = titleSub ? `${titleMain} - ${titleSub}` : titleMain;
         const fileName = `${storyMain}-${titleMain}.md`;
-        const date = dateInput.value;
-        const content = contentInput.value.trim();
 
         submitBtn.disabled = true;
         closeBtn.disabled = true;
