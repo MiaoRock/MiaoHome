@@ -480,15 +480,15 @@
     gap: 1.2vw;
     align-items: center;
     margin-top: 1vw;
+    justify-content: flex-end;
 }
 
 #gallery-add-message {
-    width: 5vw;
+    margin-right: auto;
     font-size: 1vw;
 }
 
-#gallery-add-submit,
-#gallery-add-close {
+.miao-btn {
     height: 2.3vw;
     width: 4.5vw;
     border: 0;
@@ -498,13 +498,69 @@
     background: #4f8cff;
 }
 
-#gallery-add-submit:hover,
-#gallery-add-close:hover {
+.miao-btn:hover {
     background: #3478f6;
 }
 
-#gallery-add-submit:disabled,
-#gallery-add-close:disabled {
+.miao-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+.story-add-open {
+    cursor: pointer;
+}
+
+.story-add-open:hover {
+    opacity: 0.7;
+}
+
+#story-add {
+    display: none;
+    position: fixed;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+#story-add.show {
+    display: flex;
+}
+
+#story-add {
+    width: 36vw;
+}
+
+.story-add-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8vw;
+}
+
+.story-add-body label {
+    font-size: 0.9vw;
+}
+
+.story-add-body input,
+.story-add-body textarea {
+    width: 30vw;
+    box-sizing: border-box;
+}
+
+.story-add-footer {
+    display: flex;
+    gap: 1.2vw;
+    align-items: center;
+    margin-top: 1vw;
+    justify-content: flex-end;
+}
+
+#story-add-message {
+    margin-right: auto;
+    font-size: 1vw;
+}
+
+#miao-bg {
+    display: none;
 }

@@ -16,7 +16,7 @@ async function loadGalleryPage() {
         const images = await res.json();
 
         if (!images.length) {
-            list.innerHTML = '<div class="no-content">no gallery</div>';
+            list.innerHTML = '<div>no gallery</div>';
             return;
         }
 
@@ -39,7 +39,7 @@ async function loadGalleryPage() {
         view.src = `${API_BASE}/gallery/${encodeURIComponent(targetFile)}`;
         title.textContent = getFileNameWithoutSuffix(targetFile);
     } catch (e) {
-        list.innerHTML = '<div class="no-content">gallery error</div>';
+        list.innerHTML = '<div>gallery error</div>';
         console.error('加载图片失败', e);
     }
 }

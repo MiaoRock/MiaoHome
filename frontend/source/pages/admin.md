@@ -19,7 +19,9 @@ permalink: /admin/index.html
         </div>
         <div id="miao-side">
             <div id="story-timeline" class="miao-card" data-page="admin"></div>
+            <div id="story-add"></div>
             <script src="/js/story-timeline.js"></script>
         </div>
+        <script src="/js/page-admin.js"></script>
     </div>
 </div>

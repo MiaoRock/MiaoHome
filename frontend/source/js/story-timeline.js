@@ -6,12 +6,6 @@ async function loadStory() {
     try {
         const res = await fetch(`${API_BASE}/api/story`);
         const stories = await res.json();
-
-        if (!stories.length) {
-            storyTimeline.innerHTML = '<div class="no-content">no story</div>';
-            return;
-        }
-
         const monthMap = stories.reduce((map, item) => {
             const yearMonth = item.yearMonth;
             if (!map[yearMonth]) {
@@ -26,9 +20,20 @@ async function loadStory() {
         const titleDiv = storyTimeline.appendChild(document.createElement('div'));
         titleDiv.className = 'article-sort-title';
         titleDiv.textContent = '今日';
+        if (storyTimeline.dataset.page === 'admin') {
+            titleDiv.classList.add('story-add-open');
+            titleDiv.addEventListener('click', () => {
+                document.getElementById('story-add').classList.add('show');
+            });
+        }
 
         const sortDiv = storyTimeline.appendChild(document.createElement('div'));
         sortDiv.className = 'article-sort';
+
+        if (!stories.length) {
+            storyTimeline.appendChild(document.createElement('div')).textContent = 'no story';
+            return;
+        }
 
         months.forEach(month => {
             monthMap[month].forEach(item => {
@@ -81,7 +86,7 @@ async function loadStory() {
             }, {once: true});
         }
     } catch (e) {
-        storyTimeline.innerHTML = '<div class="no-content">story error</div>';
+        storyTimeline.innerHTML = '<div>story error</div>';
         console.error('加载文章失败', e);
     }
 }

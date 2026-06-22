@@ -9,8 +9,14 @@ const PORT = process.env.PORT || 3000;
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(204);
+    }
     next();
 });
+app.use(express.json());
 
 const galleryDir = path.join(__dirname, 'gallery');
 const thumbDir = path.join(__dirname, 'thumbs');
@@ -108,6 +114,24 @@ app.get('/api/story', (req, res) => {
         const sortedList = timeline.sort((a, b) => b.time - a.time);
         res.json(sortedList);
     });
+});
+
+app.post('/api/admin/story/add', async (req, res) => {
+    try {
+        const {story, title, date, content} = req.body;
+        const fileName = `${story}-${title}.md`;
+        const filePath = path.join(storyDir, fileName);
+        const markdown = `---\nstory: ${story}\ntitle: ${title}\ndate: ${date}\n---\n\n${content}`;
+        await fs.promises.writeFile(filePath, markdown, 'utf8');
+        res.json({
+            message: '新增成功'
+        });
+    } catch (err) {
+        console.error('新增Story失败', err);
+        res.status(500).json({
+            error: '新增失败'
+        });
+    }
 });
 
 app.listen(PORT, '127.0.0.1', () => {
