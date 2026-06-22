@@ -528,10 +528,6 @@
     display: flex;
 }
 
-#story-add {
-    width: 36vw;
-}
-
 .story-add-body {
     display: flex;
     flex-direction: column;
