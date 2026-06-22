@@ -87,6 +87,7 @@ async function loadStoryAdd() {
     const submitBtn = document.getElementById('story-add-submit');
     const closeBtn = document.getElementById('story-add-close');
     const message = document.getElementById('story-add-message');
+    dateInput.value = getToday();
     closeBtn.addEventListener('click', () => {
         storyInput.value = '';
         titleInput.value = '';
@@ -127,6 +128,14 @@ async function loadStoryAdd() {
             closeBtn.disabled = false;
         }
     });
+}
+
+function getToday() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
 loadStoryAdd();

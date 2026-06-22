@@ -302,6 +302,13 @@
 }
 
 /* 文章时间轴 */
+.story-add-open {
+    cursor: pointer;
+}
+
+.story-add-open:hover {
+    opacity: 0.7;
+}
 
 /* 底部 */
 [data-theme="dark"] #footer {
@@ -417,7 +424,8 @@
 }
 
 /* admin */
-#gallery-add {
+#gallery-add,
+#story-add {
     display: none;
     position: fixed;
     inset: 0;
@@ -426,7 +434,8 @@
     z-index: 9999;
 }
 
-#gallery-add.show {
+#gallery-add.show,
+#story-add.show {
     display: flex;
 }
 
@@ -475,7 +484,8 @@
     display: none;
 }
 
-.gallery-add-footer {
+.gallery-add-footer,
+.story-add-footer {
     display: flex;
     gap: 1.2vw;
     align-items: center;
@@ -483,7 +493,8 @@
     justify-content: flex-end;
 }
 
-#gallery-add-message {
+#gallery-add-message,
+#story-add-message {
     margin-right: auto;
     font-size: 1vw;
 }
@@ -507,54 +518,31 @@
     cursor: not-allowed;
 }
 
-.story-add-open {
-    cursor: pointer;
-}
-
-.story-add-open:hover {
-    opacity: 0.7;
-}
-
-#story-add {
-    display: none;
-    position: fixed;
-    inset: 0;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-#story-add.show {
-    display: flex;
-}
-
 .story-add-body {
     display: flex;
     flex-direction: column;
-    gap: 0.8vw;
 }
 
 .story-add-body label {
-    font-size: 0.9vw;
+    font-size: 1vw;
 }
 
 .story-add-body input,
 .story-add-body textarea {
     width: 30vw;
     box-sizing: border-box;
-}
-
-.story-add-footer {
-    display: flex;
-    gap: 1.2vw;
-    align-items: center;
-    margin-top: 1vw;
-    justify-content: flex-end;
-}
-
-#story-add-message {
-    margin-right: auto;
     font-size: 1vw;
+}
+
+.story-add-body textarea {
+    height: 50vh;
+    resize: vertical;
+}
+
+#story-add input::placeholder,
+.story-add-body textarea::placeholder {
+    font-size: 1vw;
+    color: rgb(117, 117, 117);
 }
 
 #miao-bg {
