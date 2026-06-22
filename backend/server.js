@@ -46,12 +46,12 @@ app.get('/api/gallery', async (req, res) => {
 
 const createThumb = async fileName => {
     const sourcePath = path.join(galleryDir, fileName);
-    const thumbPath = path.join(thumbDir, fileName);
+    const thumbName = path.parse(fileName).name + '.webp';
+    const thumbPath = path.join(thumbDir, thumbName);
     const inputBuffer = await fs.promises.readFile(sourcePath);
     await sharp(inputBuffer)
-        .resize({
-            width: 600, withoutEnlargement: true
-        })
+        .resize({width: 600, withoutEnlargement: true})
+        .webp({quality: 80})
         .toFile(thumbPath);
 };
 
@@ -71,13 +71,7 @@ const galleryAdd = multer({
 
 app.post('/api/admin/gallery/add', galleryAdd.array('files', 20), async (req, res) => {
     await Promise.all(req.files.map(file => createThumb(file.filename)));
-    res.json({
-        files: req.files.map(file => ({
-            name: file.filename,
-            url: '/gallery/' + encodeURIComponent(file.filename),
-            thumbUrl: '/thumbs/' + encodeURIComponent(file.filename)
-        }))
-    });
+    res.json({message: 'upload success'});
 });
 
 app.get('/api/story', (req, res) => {

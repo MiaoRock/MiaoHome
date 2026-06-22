@@ -25,9 +25,12 @@ async function loadGalleryPage() {
 
         images.forEach(file => {
             const url = `${API_BASE}/gallery/${encodeURIComponent(file)}`;
+            const thumbFile = file.replace(/\.[^.]+$/, '.webp');
+            const thumbUrl = `${API_BASE}/thumbs/${encodeURIComponent(thumbFile)}`;
             const img = list.appendChild(document.createElement('img'));
-            img.src = url;
+            img.src = thumbUrl;
             img.alt = '';
+            img.loading = 'lazy';
 
             img.addEventListener('click', () => {
                 view.src = url;

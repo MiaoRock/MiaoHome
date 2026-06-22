@@ -37,7 +37,8 @@ async function loadGallery() {
 
         const items = await Promise.all(images.map(async file => {
             const url = `${API_BASE}/gallery/${encodeURIComponent(file)}`;
-            const thumbUrl = `${API_BASE}/thumbs/${encodeURIComponent(file)}`;
+            const thumbName = file.replace(/\.[^.]+$/, '.webp');
+            const thumbUrl = `${API_BASE}/thumbs/${encodeURIComponent(thumbName)}`;
             const img = await loadImage(thumbUrl, url);
             img.alt = '';
 
