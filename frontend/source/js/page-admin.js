@@ -85,15 +85,31 @@ async function loadStoryAdd() {
     const titleInput = document.getElementById('story-add-title');
     const titleSubInput = document.getElementById('story-add-title-sub');
     const dateInput = document.getElementById('story-add-date');
+    const timeInput = document.getElementById('story-add-time');
+    const authorInput = document.getElementById('story-add-author');
     const contentInput = document.getElementById('story-add-content');
     const submitBtn = document.getElementById('story-add-submit');
     const closeBtn = document.getElementById('story-add-close');
     const message = document.getElementById('story-add-message');
-    dateInput.value = getToday();
+
+    const today = getToday();
+    dateInput.value = today;
+    dateInput.max = today;
+    timeInput.value = '';
+    timeInput.disabled = true;
+
+    dateInput.addEventListener('change', () => {
+        timeInput.disabled = dateInput.value === today;
+    });
+
     closeBtn.addEventListener('click', () => {
         storyInput.value = '';
+        storySubInput.value = '';
         titleInput.value = '';
-        dateInput.value = getToday();
+        titleSubInput.value = '';
+        dateInput.value = today;
+        timeInput.value = '';
+        authorInput.value = '';
         contentInput.value = '';
         message.textContent = '';
         modal.classList.remove('show');
@@ -103,9 +119,10 @@ async function loadStoryAdd() {
         const storySub = storySubInput.value.trim();
         const titleMain = titleInput.value.trim();
         const titleSub = titleSubInput.value.trim();
-        const date = dateInput.value;
+        const dateTime = timeInput.value ? `${dateInput.value} ${timeInput.value}` : `${dateInput.value} ${getNowTime()}`;
+        const author = authorInput.value.trim();
         const content = contentInput.value.trim();
-        if (!storyMain || !titleMain || !date || !content) {
+        if (!storyMain || !titleMain || !dateTime || !content) {
             message.textContent = '请填写完整内容';
             return;
         }
@@ -120,7 +137,7 @@ async function loadStoryAdd() {
             const res = await fetch(API_BASE + '/api/admin/story/add', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({story, title, date, content, fileName})
+                body: JSON.stringify({story, title, dateTime, author, content, fileName})
             });
             if (!res.ok) {
                 message.textContent = '保存失败';
@@ -144,6 +161,14 @@ function getToday() {
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+}
+
+function getNowTime() {
+    const now = new Date();
+    const hour = String(now.getHours()).padStart(2, '0');
+    const minute = String(now.getMinutes()).padStart(2, '0');
+    const second = String(now.getSeconds()).padStart(2, '0');
+    return `${hour}:${minute}:${second}`;
 }
 
 loadStoryAdd();

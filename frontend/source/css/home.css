@@ -380,39 +380,34 @@
 }
 
 /* story page */
+#story-story {
+    font-size: 1vw;
+    font-weight: 500;
+    margin-bottom: 0.4vw;
+}
+
 #story-title {
-    font-size: 22px;
+    font-size: 1.15vw;
     font-weight: 600;
-    margin-bottom: 18px;
+    margin-bottom: 0.6vw;
+}
+
+#story-date {
+    font-size: 0.85vw;
+    margin-bottom: 1vw;
+    opacity: 0.65;
+}
+
+#story-author {
+    font-size: 0.95vw;
+    margin-bottom: 0.4vw;
+    opacity: 0.8;
 }
 
 #story-view {
     line-height: 1.8;
     white-space: pre-wrap;
     word-break: break-word;
-}
-
-.story-month {
-    font-size: 14px;
-    font-weight: 600;
-    margin: 14px 0 8px;
-    opacity: 0.7;
-}
-
-.story-list-item {
-    cursor: pointer;
-    padding: 10px 12px;
-    border-radius: 8px;
-    transition: transform 0.25s ease, background-color 0.25s ease;
-}
-
-.story-list-item:hover {
-    transform: scale(1.02);
-}
-
-.story-list-item.active {
-    font-weight: 600;
-    background-color: rgba(0, 0, 0, 0.06);
 }
 
 #gallery-list,

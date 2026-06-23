@@ -14,7 +14,10 @@ permalink: /story/index.html
     <div id="miao-content">
         <div id="miao-main">
             <div class="miao-card">
+                <div id="story-story"></div>
                 <div id="story-title"></div>
+                <div id="story-date"></div>
+                <div id="story-author"></div>
                 <div id="story-view"></div>
                 <script src="/js/page-story.js"></script>
             </div>

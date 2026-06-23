@@ -93,16 +93,17 @@ app.get('/api/story', (req, res) => {
             const story = fm.story || '';
             const title = fm.title || '';
             const rawDateText = fm.date || '';
-            const dateText = rawDateText.trim()
+            const author = fm.author || '';
+            const date = rawDateText.trim()
                 .replace(/^(\d{4})-(\d{1,2})-(\d{1,2})(.*)$/, (m, y, month, day, rest) => {
                     return y + '-' + month.padStart(2, '0') + '-' + day.padStart(2, '0') + rest;
                 });
-            const parseDateText = dateText.replace(/\s+/, 'T');
+            const parseDateText = date.replace(/\s+/, 'T');
             const time = new Date(parseDateText).getTime() || 0;
             const yearMonth = String(parseDateText).slice(0, 7);
             const url = '/story/' + encodeURIComponent(file.replace(/\.md$/, '')) + '/';
             return {
-                story, title, dateText, time: time, yearMonth: yearMonth, url: url
+                story, title, date, author, time, yearMonth, url
             };
         });
         const sortedList = timeline.sort((a, b) => b.time - a.time);
@@ -112,9 +113,9 @@ app.get('/api/story', (req, res) => {
 
 app.post('/api/admin/story/add', async (req, res) => {
     try {
-        const {story, title, date, content, fileName} = req.body;
+        const {story, title, dateTime, author, content, fileName} = req.body;
         const filePath = path.join(storyDir, fileName);
-        const markdown = `---\nstory: ${story}\ntitle: ${title}\ndate: ${date}\n---\n\n${content}`;
+        const markdown = `---\nstory: ${story}\ntitle: ${title}\nauthor: ${author}\ndate: ${dateTime}\n---\n\n${content}`;
         await fs.promises.writeFile(filePath, markdown, 'utf8');
         res.json({
             message: '新增成功'

@@ -51,11 +51,11 @@ async function loadStory() {
 
                 const time = timeDiv.appendChild(document.createElement('time'));
                 time.className = 'post-meta-date-created';
-                time.setAttribute('datetime', item.dateText || '');
-                time.textContent = item.dateText || '';
+                time.setAttribute('datetime', item.date || '');
+                time.textContent = item.date || '';
 
                 const link = infoDiv.appendChild(document.createElement('a'));
-                const linkText = item.story + ' - ' + item.title;
+                const linkText = `${item.story} · ${item.title} by ${item.author}`;
                 link.className = 'article-sort-item-title';
                 link.href = item.url || '#';
                 link.title = linkText;
