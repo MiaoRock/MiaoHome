@@ -55,7 +55,10 @@ async function loadStory() {
                 time.textContent = item.date || '';
 
                 const link = infoDiv.appendChild(document.createElement('a'));
-                const linkText = `${item.story} · ${item.title} by ${item.author}`;
+                let linkText = `${item.story} · ${item.title}`;
+                if (item.author) {
+                    linkText += ` by ${item.author}`;
+                }
                 link.className = 'article-sort-item-title';
                 link.href = item.url || '#';
                 link.title = linkText;
