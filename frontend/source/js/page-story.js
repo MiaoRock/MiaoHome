@@ -1,14 +1,14 @@
 async function loadStoryPage() {
     const story = document.getElementById('story-story');
     const title = document.getElementById('story-title');
-    const date = document.getElementById('story-date');
     const author = document.getElementById('story-author');
+    const date = document.getElementById('story-date');
     const view = document.getElementById('story-view');
 
     story.textContent = '';
     title.textContent = '';
-    date.textContent = '';
     author.textContent = '';
+    date.textContent = '';
     view.textContent = '';
 
     try {
@@ -31,14 +31,14 @@ async function loadStoryContent(story) {
     const API_BASE = window.APP_CONFIG.API_BASE;
     const storyElement = document.getElementById('story-story');
     const title = document.getElementById('story-title');
-    const date = document.getElementById('story-date');
     const author = document.getElementById('story-author');
+    const date = document.getElementById('story-date');
     const view = document.getElementById('story-view');
 
     storyElement.textContent = story.story;
     title.textContent = story.title;
-    date.textContent = story.date;
     author.textContent = story.author;
+    date.textContent = story.date;
     view.textContent = '';
 
     const mdUrl = story.url.replace(/\/$/, '') + '.md';

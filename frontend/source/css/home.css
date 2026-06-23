@@ -529,7 +529,7 @@
 
 .story-add-body input,
 .story-add-body textarea {
-    width: 45vw;
+    width: 25vw;
     box-sizing: border-box;
     font-size: 1vw;
 }
