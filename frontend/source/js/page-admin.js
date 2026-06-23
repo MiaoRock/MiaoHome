@@ -84,9 +84,9 @@ async function loadStoryAdd() {
     const storySubInput = document.getElementById('story-add-story-sub');
     const titleInput = document.getElementById('story-add-title');
     const titleSubInput = document.getElementById('story-add-title-sub');
+    const authorInput = document.getElementById('story-add-author');
     const dateInput = document.getElementById('story-add-date');
     const timeInput = document.getElementById('story-add-time');
-    const authorInput = document.getElementById('story-add-author');
     const contentInput = document.getElementById('story-add-content');
     const submitBtn = document.getElementById('story-add-submit');
     const closeBtn = document.getElementById('story-add-close');
@@ -107,9 +107,9 @@ async function loadStoryAdd() {
         storySubInput.value = '';
         titleInput.value = '';
         titleSubInput.value = '';
+        authorInput.value = '';
         dateInput.value = today;
         timeInput.value = '';
-        authorInput.value = '';
         contentInput.value = '';
         message.textContent = '';
         modal.classList.remove('show');
@@ -119,10 +119,10 @@ async function loadStoryAdd() {
         const storySub = storySubInput.value.trim();
         const titleMain = titleInput.value.trim();
         const titleSub = titleSubInput.value.trim();
-        const dateTime = timeInput.value ? `${dateInput.value} ${timeInput.value}` : `${dateInput.value} ${getNowTime()}`;
         const author = authorInput.value.trim();
-        const content = contentInput.value.trim();
-        if (!storyMain || !titleMain || !dateTime || !content) {
+        const dateTime = timeInput.value ? `${dateInput.value} ${timeInput.value}` : `${dateInput.value} ${getNowTime()}`;
+        const content = contentInput.value;
+        if (!storyMain || !titleMain || !dateTime || !content.trim()) {
             message.textContent = '请填写完整内容';
             return;
         }
@@ -137,7 +137,7 @@ async function loadStoryAdd() {
             const res = await fetch(API_BASE + '/api/admin/story/add', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({story, title, dateTime, author, content, fileName})
+                body: JSON.stringify({story, title, author, dateTime, content, fileName})
             });
             if (!res.ok) {
                 message.textContent = '保存失败';

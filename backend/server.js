@@ -103,7 +103,7 @@ app.get('/api/story', (req, res) => {
             const yearMonth = String(parseDateText).slice(0, 7);
             const url = '/story/' + encodeURIComponent(file.replace(/\.md$/, '')) + '/';
             return {
-                story, title, date, author, time, yearMonth, url
+                story, title, author, date, time, yearMonth, url
             };
         });
         const sortedList = timeline.sort((a, b) => b.time - a.time);
@@ -113,7 +113,7 @@ app.get('/api/story', (req, res) => {
 
 app.post('/api/admin/story/add', async (req, res) => {
     try {
-        const {story, title, dateTime, author, content, fileName} = req.body;
+        const {story, title, author, dateTime, content, fileName} = req.body;
         const filePath = path.join(storyDir, fileName);
         const markdown = `---\nstory: ${story}\ntitle: ${title}\nauthor: ${author}\ndate: ${dateTime}\n---\n\n${content}`;
         await fs.promises.writeFile(filePath, markdown, 'utf8');
