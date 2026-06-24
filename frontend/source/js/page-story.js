@@ -50,7 +50,7 @@ async function loadStoryContent(story) {
     }
 
     const mdText = await res.text();
-    view.textContent = mdText.replace(/^---\r?\n[\s\S]*?\r?\n---/, '').trim();
+    view.textContent = mdText.replace(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n)?/, '');
 }
 
 async function getStories() {

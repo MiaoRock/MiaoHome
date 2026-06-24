@@ -16,7 +16,9 @@ app.use((req, res, next) => {
     }
     next();
 });
-app.use(express.json());
+app.use(express.json({
+    limit: '20mb'
+}));
 
 const galleryDir = path.join(__dirname, 'gallery');
 const thumbDir = path.join(__dirname, 'thumbs');
@@ -71,7 +73,24 @@ const galleryAdd = multer({
 
 app.post('/api/admin/gallery/add', galleryAdd.array('files', 20), async (req, res) => {
     await Promise.all(req.files.map(file => createThumb(file.filename)));
-    res.json({message: 'upload success'});
+    res.json({message: 'success'});
+});
+
+app.post('/api/admin/gallery/touch', async (req, res) => {
+    try {
+        const {file} = req.body;
+        const filePath = path.join(galleryDir, path.basename(String(file || '')));
+        const stat = await fs.promises.stat(filePath);
+        if (!stat.isFile()) {
+            return res.status(404).json({error: 'file not found'});
+        }
+        const now = new Date();
+        await fs.promises.utimes(filePath, now, now);
+        res.json({message: 'success'});
+    } catch (err) {
+        console.error('touch gallery failed', err);
+        res.status(500).json({error: 'failed'});
+    }
 });
 
 app.get('/api/story', (req, res) => {
@@ -82,7 +101,7 @@ app.get('/api/story', (req, res) => {
         const timeline = markdownFiles.map(file => {
             const filePath = path.join(storyDir, file);
             const content = fs.readFileSync(filePath, 'utf8');
-            const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+            const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n)?/);
             const fm = {};
             if (match) {
                 match[1].split(/\r?\n/).forEach(line => {
@@ -115,16 +134,12 @@ app.post('/api/admin/story/add', async (req, res) => {
     try {
         const {story, title, author, dateTime, content, fileName} = req.body;
         const filePath = path.join(storyDir, fileName);
-        const markdown = `---\nstory: ${story}\ntitle: ${title}\nauthor: ${author}\ndate: ${dateTime}\n---\n\n${content}`;
+        const markdown = `---\nstory: ${story}\ntitle: ${title}\nauthor: ${author}\ndate: ${dateTime}\n---\n${content}`;
         await fs.promises.writeFile(filePath, markdown, 'utf8');
-        res.json({
-            message: '新增成功'
-        });
+        res.json({message: 'success'});
     } catch (err) {
         console.error('新增Story失败', err);
-        res.status(500).json({
-            error: '新增失败'
-        });
+        res.status(500).json({error: 'failed'});
     }
 });
 

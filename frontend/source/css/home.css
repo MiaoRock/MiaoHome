@@ -83,7 +83,7 @@
     width: 100%;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 36fr 10fr;
+    grid-template-columns: 33fr 10fr;
     gap: 1.2vw;
 }
 
@@ -240,7 +240,9 @@
 [data-theme="dark"] .contact-list span,
 [data-theme="dark"] .site-list span,
 [data-theme="dark"] .gallery-add-icon,
-[data-theme="dark"] .gallery-add-footer button {
+[data-theme="dark"] .gallery-add-footer button,
+[data-theme="dark"] .gallery-touch-btn,
+[data-theme="dark"] .story-edit-btn {
     color: #fff;
 }
 
@@ -249,7 +251,9 @@
 [data-theme="light"] .contact-list span,
 [data-theme="light"] .site-list span,
 [data-theme="light"] .gallery-add-icon,
-[data-theme="light"] .gallery-add-footer button {
+[data-theme="light"] .gallery-add-footer button,
+[data-theme="light"] .gallery-touch-btn,
+[data-theme="light"] .story-edit-btn {
     color: #000;
 }
 
@@ -268,11 +272,10 @@
 }
 
 .gallery-col img,
-.gallery-col button {
+.gallery-add-card {
     width: 100%;
     border-radius: 0.7vw;
     margin: 0;
-    transition: transform 0.4s ease;
 }
 
 .gallery-col img {
@@ -280,12 +283,28 @@
     display: block;
 }
 
-.gallery-col button {
+.gallery-wrap {
+    position: relative;
+    transition: transform 0.4s ease;
+}
+
+.gallery-touch-btn {
+    position: absolute;
+    top: 0.5vw;
+    right: 0.5vw;
+    z-index: 10;
+    width: 1vw;
+    height: 1vw;
+    font-size: 1vw;
+}
+
+.gallery-add-card {
     height: 7.5vw;
     border: 3px dashed #777;
     background: rgba(128, 128, 128, 0.65);
     display: grid;
     place-items: center;
+    transition: transform 0.4s ease;
 }
 
 .gallery-add-icon {
@@ -296,8 +315,8 @@
             linear-gradient(currentColor, currentColor) center / 0.25vw 100% no-repeat;
 }
 
-.gallery-col img:hover,
-.gallery-col button:hover {
+.gallery-wrap:hover,
+.gallery-add-card:hover {
     transform: scale(1.04);
 }
 
@@ -308,6 +327,16 @@
 
 .story-add-open:hover {
     opacity: 0.7;
+}
+
+.story-edit-btn {
+    font-size: 0.85vw;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.story-edit-btn:hover {
+    transform: translateY(-1px) rotate(-12deg) scale(1.15);
 }
 
 /* 底部 */

@@ -98,7 +98,24 @@ async function loadStoryAdd() {
     timeInput.value = '';
     timeInput.disabled = true;
 
+    storyInput.addEventListener('input', () => {
+        storyInput.value = storyInput.value.replace(/-/g, '');
+    });
+
+    titleSubInput.addEventListener('input', () => {
+        titleSubInput.value = titleSubInput.value.replace(/-/g, '');
+    });
+
+    titleInput.addEventListener('input', () => {
+        titleInput.value = titleInput.value.replace(/-/g, '');
+    });
+
+    titleSubInput.addEventListener('input', () => {
+        titleSubInput.value = titleSubInput.value.replace(/-/g, '');
+    });
+
     dateInput.addEventListener('change', () => {
+        timeInput.value = '';
         timeInput.disabled = dateInput.value === today;
     });
 
@@ -126,8 +143,8 @@ async function loadStoryAdd() {
             message.textContent = '请填写完整内容';
             return;
         }
-        const story = storySub ? `${storyMain} - ${storySub}` : storyMain;
-        const title = titleSub ? `${titleMain} - ${titleSub}` : titleMain;
+        const story = storySub ? `${storyMain}-${storySub}` : storyMain;
+        const title = titleSub ? `${titleMain}-${titleSub}` : titleMain;
         const fileName = `${storyMain}-${titleMain}.md`;
 
         submitBtn.disabled = true;

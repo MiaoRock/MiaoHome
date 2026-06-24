@@ -36,18 +36,43 @@ async function loadGallery() {
         }
 
         const items = await Promise.all(images.map(async file => {
+            const wrap = document.createElement('div');
+            wrap.className = 'gallery-wrap';
+
             const url = `${API_BASE}/gallery/${encodeURIComponent(file)}`;
             const thumbName = file.replace(/\.[^.]+$/, '.webp');
             const thumbUrl = `${API_BASE}/thumbs/${encodeURIComponent(thumbName)}`;
             const img = await loadImage(thumbUrl, url);
             img.alt = '';
 
-            const a = document.createElement('a');
+            const a = wrap.appendChild(document.createElement('a'));
             a.href = `/gallery/${encodeURIComponent(file)}`;
             a.appendChild(img);
-
+            if (galleryWall.dataset.page === 'admin') {
+                const btn = wrap.appendChild(document.createElement('button'));
+                btn.type = 'button';
+                btn.textContent = '︎⇧';
+                btn.className = 'gallery-touch-btn';
+                btn.addEventListener('click', async () => {
+                    try {
+                        const res = await fetch(API_BASE + '/api/admin/gallery/touch', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({file})
+                        });
+                        if (!res.ok) {
+                            alert('置顶失败');
+                            return;
+                        }
+                        await loadGallery();
+                    } catch (e) {
+                        alert('置顶失败');
+                        console.error('置顶图片失败', e);
+                    }
+                });
+            }
             return {
-                element: a
+                element: wrap
             };
         }));
 
