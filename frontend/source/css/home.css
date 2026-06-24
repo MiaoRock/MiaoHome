@@ -83,7 +83,7 @@
     width: 100%;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 33fr 10fr;
+    grid-template-columns: 30fr 10fr;
     gap: 1.2vw;
 }
 
