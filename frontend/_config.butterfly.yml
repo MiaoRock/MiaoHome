@@ -31,9 +31,9 @@ aside:
   enable: false
 
 busuanzi:
-  site_uv: false
-  site_pv: false
-  page_pv: false
+  site_uv: true
+  site_pv: true
+  page_pv: true
 
 footer:
   owner:

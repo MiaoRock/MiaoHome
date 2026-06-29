@@ -573,3 +573,25 @@
     font-size: 1vw;
     color: rgb(117, 117, 117);
 }
+
+.profile-header {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+}
+
+.profile-stats {
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: end;
+    gap: 3px;
+}
+
+.profile-stat {
+    font-size: 9px;
+    line-height: 1;
+    text-align: center;
+}
+
+.profile-stat span {
+    display: block;
+}
