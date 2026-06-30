@@ -19,12 +19,13 @@ permalink: /story/index.html
                 <div id="story-author"></div>
                 <div id="story-date"></div>
                 <div id="story-view"></div>
-                <script src="/js/page-story.js"></script>
             </div>
         </div>
         <div id="miao-side">
-            <div id="story-timeline" class="miao-card" data-page="story"></div>
-            <script src="/js/story-timeline.js"></script>
+            <div id="story-list" class="miao-card"></div>
+            <div id="story-episode" class="miao-card"></div>
+            <script src="/js/story-list.js"></script>
         </div>
+        <script src="/js/page-story.js"></script>
     </div>
 </div>

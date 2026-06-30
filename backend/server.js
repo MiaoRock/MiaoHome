@@ -6,6 +6,8 @@ const sharp = require('sharp');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const FRONT_MATTER_REG = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n)?/
+const FRONT_MATTER_LINE_REG = /^([a-zA-Z0-9_-]+)\s*:\s*(.*)$/;
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -93,48 +95,120 @@ app.post('/api/admin/gallery/touch', async (req, res) => {
     }
 });
 
-app.get('/api/story', (req, res) => {
-    fs.readdir(storyDir, (err, files) => {
-        if (err) return res.status(500).json({error: 'no story'});
+app.get('/api/story', async (req, res) => {
+    try {
+        const dirs = await fs.promises.readdir(storyDir, {withFileTypes: true});
+        const timeline = [];
 
-        const markdownFiles = files.filter(f => f.endsWith('.md'));
-        const timeline = markdownFiles.map(file => {
-            const filePath = path.join(storyDir, file);
-            const content = fs.readFileSync(filePath, 'utf8');
-            const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n)?/);
-            const fm = {};
-            if (match) {
-                match[1].split(/\r?\n/).forEach(line => {
-                    const m = line.match(/^([a-zA-Z0-9_-]+)\s*:\s*(.*)$/);
-                    if (m) fm[m[1].trim()] = m[2].trim().replace(/^['"]|['"]$/g, '');
-                });
+        for (const dir of dirs) {
+            if (!dir.isDirectory() || dir.name === 'info') {
+                continue;
             }
-            const story = fm.story || '';
-            const title = fm.title || '';
-            const rawDateText = fm.date || '';
-            const author = fm.author || '';
-            const date = rawDateText.trim()
-                .replace(/^(\d{4})-(\d{1,2})-(\d{1,2})(.*)$/, (m, y, month, day, rest) => {
-                    return y + '-' + month.padStart(2, '0') + '-' + day.padStart(2, '0') + rest;
+
+            const storyPath = path.join(storyDir, dir.name);
+            const files = await fs.promises.readdir(storyPath);
+            const markdownFiles = files.filter(file => file.endsWith('.md'));
+
+            markdownFiles.forEach(file => {
+                const filePath = path.join(storyPath, file);
+                const content = fs.readFileSync(filePath, 'utf8');
+                const fm = parseFrontMatter(content);
+
+                const story = fm.story || '';
+                const title = fm.title || '';
+                const rawDateText = fm.date || '';
+                const author = fm.author || '';
+
+                const date = rawDateText.trim()
+                    .replace(/^(\d{4})-(\d{1,2})-(\d{1,2})(.*)$/, (m, y, month, day, rest) => {
+                        return y + '-' + month.padStart(2, '0') + '-' + day.padStart(2, '0') + rest;
+                    });
+
+                const parseDateText = date.replace(/\s+/, 'T');
+                const time = new Date(parseDateText).getTime() || 0;
+                const yearMonth = String(parseDateText).slice(0, 7);
+                const url = '/story/' + encodeURIComponent(dir.name) + '/' + encodeURIComponent(file.replace(/\.md$/, '')) + '/';
+
+                timeline.push({
+                    story, title, author, date, time, yearMonth, url
                 });
-            const parseDateText = date.replace(/\s+/, 'T');
-            const time = new Date(parseDateText).getTime() || 0;
-            const yearMonth = String(parseDateText).slice(0, 7);
-            const url = '/story/' + encodeURIComponent(file.replace(/\.md$/, '')) + '/';
-            return {
-                story, title, author, date, time, yearMonth, url
-            };
-        });
+            });
+        }
+
         const sortedList = timeline.sort((a, b) => b.time - a.time);
         res.json(sortedList);
-    });
+    } catch (err) {
+        console.error('查询Story失败', err);
+        res.status(500).json({error: 'no story'});
+    }
+});
+
+app.get('/api/story/list', async (req, res) => {
+    try {
+        const storyInfoDir = path.join(storyDir, 'info');
+        const files = await fs.promises.readdir(storyInfoDir);
+        const storyList = await Promise.all(files.filter(file => file.endsWith('.md')).map(async file => {
+            const content = await fs.promises.readFile(path.join(storyInfoDir, file), 'utf8');
+            const fm = parseFrontMatter(content);
+            return {
+                story: fm.story || '',
+                storySub: fm.storySub || '',
+                count: Number(fm.count || 0),
+                latestTitle: fm.latestTitle || '',
+                latestDate: fm.latestDate || '',
+                author: fm.author || ''
+            };
+        }));
+        res.json(storyList);
+    } catch (err) {
+        console.error('查询Story列表失败', err);
+        res.status(500).json({error: 'failed'});
+    }
+});
+
+app.get('/api/story/episode', async (req, res) => {
+    try {
+        const {story} = req.query;
+        const storyInfoPath = path.join(storyDir, 'info', `${story}.md`);
+        const content = await fs.promises.readFile(storyInfoPath, 'utf8');
+        const episodeContent = content.replace(FRONT_MATTER_REG, '').trim();
+        const storyEpisode = episodeContent ? JSON.parse(episodeContent) : [];
+        res.json(storyEpisode);
+    } catch (err) {
+        console.error('查询Story章节失败', err);
+        res.status(500).json({error: 'failed'});
+    }
 });
 
 app.post('/api/admin/story/add', async (req, res) => {
     try {
-        const {story, title, author, dateTime, content, fileName} = req.body;
-        const filePath = path.join(storyDir, fileName);
+        const {storyMain, storySub, titleMain, titleSub, author, dateTime, content} = req.body;
+        const story = storySub ? `${storyMain}-${storySub}` : storyMain;
+        const title = titleSub ? `${titleMain}-${titleSub}` : titleMain;
+        const filePath = path.join(storyDir, storyMain, `${titleMain}.md`);
+        const storyInfoPath = path.join(storyDir, 'info', `${storyMain}.md`);
+        const storyInfo = fs.existsSync(storyInfoPath) ? await fs.promises.readFile(storyInfoPath, 'utf8') : '';
+        const storyInfoContent = storyInfo.replace(FRONT_MATTER_REG, '').trim();
+        const storyEpisode = storyInfoContent ? JSON.parse(storyInfoContent) : [];
+        const episode = storyEpisode.find(episode => episode.title === title);
+        if (episode) {
+            episode.titleSub = titleSub;
+            episode.author = author;
+            episode.date = dateTime;
+        } else {
+            storyEpisode.push({
+                title: titleMain,
+                titleSub: titleSub,
+                author: author,
+                date: dateTime,
+            });
+        }
+
+        const infoMarkdown = `---\nstory: ${storyMain}\nstorySub: ${storySub}\ncount: ${storyEpisode.length}\nlatestTitle: ${title}\nlatestDate: ${dateTime}\nauthor: ${author}\n---\n${JSON.stringify(storyEpisode, null, 4)}`;
         const markdown = `---\nstory: ${story}\ntitle: ${title}\nauthor: ${author}\ndate: ${dateTime}\n---\n${content}`;
+
+        await fs.promises.writeFile(storyInfoPath, infoMarkdown, 'utf8');
+        await fs.promises.mkdir(path.dirname(filePath), {recursive: true});
         await fs.promises.writeFile(filePath, markdown, 'utf8');
         res.json({message: 'success'});
     } catch (err) {
@@ -142,6 +216,20 @@ app.post('/api/admin/story/add', async (req, res) => {
         res.status(500).json({error: 'failed'});
     }
 });
+
+function parseFrontMatter(content) {
+    const match = content.match(FRONT_MATTER_REG);
+    const fm = {};
+    if (match) {
+        match[1].split(/\r?\n/).forEach(line => {
+            const m = line.match(FRONT_MATTER_LINE_REG);
+            if (m) {
+                fm[m[1].trim()] = m[2].trim();
+            }
+        });
+    }
+    return fm;
+}
 
 app.listen(PORT, '127.0.0.1', () => {
     console.log(`Server running on http://127.0.0.1:${PORT}`);

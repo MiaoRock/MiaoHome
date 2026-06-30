@@ -143,9 +143,6 @@ async function loadStoryAdd() {
             message.textContent = '请填写完整内容';
             return;
         }
-        const story = storySub ? `${storyMain}-${storySub}` : storyMain;
-        const title = titleSub ? `${titleMain}-${titleSub}` : titleMain;
-        const fileName = `${storyMain}-${titleMain}.md`;
 
         submitBtn.disabled = true;
         closeBtn.disabled = true;
@@ -154,7 +151,7 @@ async function loadStoryAdd() {
             const res = await fetch(API_BASE + '/api/admin/story/add', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({story, title, author, dateTime, content, fileName})
+                body: JSON.stringify({storyMain, storySub, titleMain, titleSub, author, dateTime, content})
             });
             if (!res.ok) {
                 message.textContent = '保存失败';
