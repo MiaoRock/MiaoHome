@@ -22,9 +22,12 @@ permalink: /story/index.html
             </div>
         </div>
         <div id="miao-side">
-            <div id="story-list" class="miao-card"></div>
-            <div id="story-episode" class="miao-card"></div>
-            <script src="/js/story-list.js"></script>
+            <div class="miao-card">
+                <div id="story-list"></div>
+            </div>
+            <div class="miao-card">
+                <div id="story-index"></div>
+            </div>
         </div>
         <script src="/js/page-story.js"></script>
     </div>

@@ -65,15 +65,6 @@ async function loadStory() {
                 link.title = linkText;
                 link.textContent = linkText;
 
-                if (storyTimeline.dataset.page === 'story') {
-                    link.addEventListener('click', function (event) {
-                        event.preventDefault();
-                        if (typeof window.loadStoryByUrl === 'function') {
-                            window.loadStoryByUrl(link.getAttribute('href'));
-                        }
-                    });
-                }
-
                 if (storyTimeline.dataset.page === 'admin') {
                     const btn = infoDiv.appendChild(document.createElement('button'));
                     btn.type = 'button';

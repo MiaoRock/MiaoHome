@@ -143,6 +143,26 @@ app.get('/api/story', async (req, res) => {
     }
 });
 
+app.get('/api/story/content', async (req, res) => {
+    try {
+        const {story, title} = req.query;
+        const filePath = path.join(storyDir, story, `${title}.md`);
+        const mdText = await fs.promises.readFile(filePath, 'utf8');
+        const fm = parseFrontMatter(mdText);
+        const content = mdText.replace(FRONT_MATTER_REG, '');
+        res.json({
+            story: fm.story || '',
+            title: fm.title || '',
+            author: fm.author || '',
+            date: fm.date || '',
+            content: content
+        });
+    } catch (err) {
+        console.error('查询Story Content失败', err);
+        res.status(500).json({error: 'failed'});
+    }
+});
+
 app.get('/api/story/list', async (req, res) => {
     try {
         const storyInfoDir = path.join(storyDir, 'info');
@@ -161,21 +181,31 @@ app.get('/api/story/list', async (req, res) => {
         }));
         res.json(storyList);
     } catch (err) {
-        console.error('查询Story列表失败', err);
+        console.error('查询Story List失败', err);
         res.status(500).json({error: 'failed'});
     }
 });
 
-app.get('/api/story/episode', async (req, res) => {
+app.get('/api/story/index', async (req, res) => {
     try {
         const {story} = req.query;
         const storyInfoPath = path.join(storyDir, 'info', `${story}.md`);
         const content = await fs.promises.readFile(storyInfoPath, 'utf8');
-        const episodeContent = content.replace(FRONT_MATTER_REG, '').trim();
-        const storyEpisode = episodeContent ? JSON.parse(episodeContent) : [];
-        res.json(storyEpisode);
+        const fm = parseFrontMatter(content);
+        const indexContent = content.replace(FRONT_MATTER_REG, '').trim();
+        const storyIndex = indexContent ? JSON.parse(indexContent) : [];
+
+        res.json({
+            story: fm.story || '',
+            storySub: fm.storySub || '',
+            count: Number(fm.count || 0),
+            latestTitle: fm.latestTitle || '',
+            latestDate: fm.latestDate || '',
+            author: fm.author || '',
+            index: storyIndex
+        });
     } catch (err) {
-        console.error('查询Story章节失败', err);
+        console.error('查询Story Index失败', err);
         res.status(500).json({error: 'failed'});
     }
 });
