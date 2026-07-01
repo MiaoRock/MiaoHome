@@ -63,7 +63,16 @@ async function loadStoryList(story) {
 
             const storyInfo = link.appendChild(document.createElement('div'));
             storyInfo.className = 'story-list-story-info';
-            storyInfo.textContent = `${storyItem.count} 篇 · ${storyItem.latestTitle || ''}`;
+            storyInfo.textContent = `${storyItem.count} 篇 · ${storyItem.latestDate || ''}`;
+
+            const storyLatest = link.appendChild(document.createElement('div'));
+            storyLatest.className = 'story-list-latest';
+
+            let latestText = storyItem.latestTitle || '';
+            if (storyItem.author) {
+                latestText += ` by ${storyItem.author}`;
+            }
+            storyLatest.textContent = latestText ? `最新｜${latestText}` : '';
 
             if (storyItem.story === story) {
                 link.classList.add('active');
@@ -77,8 +86,10 @@ async function loadStoryList(story) {
                 link.classList.add('active');
                 activeListLink = link;
                 await loadStoryIndex(storyItem.story, '');
+                updateStorySideHeight();
             });
         });
+        updateStorySideHeight();
     } catch (e) {
         storyListElement.innerHTML = '<div>story error</div>';
         console.error('加载story list失败', e);
@@ -110,9 +121,27 @@ async function loadStoryIndex(story, title) {
             link.className = 'story-index-item';
             link.href = `/story/${encodeURIComponent(story)}/${encodeURIComponent(titleItem.title)}/`;
 
+            const timeElement = link.appendChild(document.createElement('div'));
+            timeElement.className = 'story-index-time';
+
+            const icon = timeElement.appendChild(document.createElement('i'));
+            icon.className = 'far fa-calendar-alt';
+
+            const time = timeElement.appendChild(document.createElement('time'));
+            time.className = 'story-index-date';
+            time.setAttribute('datetime', titleItem.date || '');
+            time.textContent = titleItem.date || '';
+
             const titleElement = link.appendChild(document.createElement('div'));
             titleElement.className = 'story-index-title';
-            titleElement.textContent = titleItem.titleSub ? `${titleItem.title}-${titleItem.titleSub}` : titleItem.title;
+
+            let titleText = titleItem.titleSub ? `${titleItem.title}-${titleItem.titleSub}` : titleItem.title;
+            if (titleItem.author) {
+                titleText += ` by ${titleItem.author}`;
+            }
+
+            titleElement.textContent = titleText;
+            link.title = titleText;
 
             if (titleItem.title === title) {
                 link.classList.add('active');
@@ -152,5 +181,52 @@ function parseStoryUrl(url) {
         urlStory: parts[0] || '', urlTitle: parts[1] || ''
     };
 }
+
+function updateStorySideHeight() {
+    const storyList = document.getElementById('story-list');
+    const storyIndex = document.getElementById('story-index');
+
+    if (!storyList || !storyIndex) {
+        return;
+    }
+
+    storyList.style.transform = '';
+
+    const top = 60 + window.innerWidth * 0.012;
+    const gap = 16;
+
+    const maxListHeight = window.innerHeight * 0.6;
+    const minListHeight = window.innerHeight * 0.2;
+
+    const shrinkDistance = window.innerHeight * 0.4;
+    const shrinkRate = Math.min(window.scrollY, shrinkDistance) / shrinkDistance;
+
+    const listHeight = maxListHeight - (maxListHeight - minListHeight) * shrinkRate;
+
+    storyList.style.top = `${top}px`;
+    storyList.style.height = `${listHeight}px`;
+
+    const indexTop = top + storyList.getBoundingClientRect().height + gap;
+    const indexHeight = window.innerHeight - indexTop;
+
+    storyIndex.style.top = `${indexTop}px`;
+    storyIndex.style.height = `${indexHeight}px`;
+
+    const indexRealTop = storyIndex.getBoundingClientRect().top;
+    const pushUp = indexTop - indexRealTop;
+
+    if (pushUp > 0) {
+        storyList.style.transform = `translateY(-${pushUp}px)`;
+    }
+
+    if (listHeight <= minListHeight + 1 && activeListLink) {
+        storyList.classList.add('compact');
+    } else {
+        storyList.classList.remove('compact');
+    }
+}
+
+window.addEventListener('scroll', updateStorySideHeight);
+window.addEventListener('resize', updateStorySideHeight);
 
 loadStoryPage();
