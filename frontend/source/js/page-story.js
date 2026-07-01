@@ -1,21 +1,21 @@
-let activeIndexLink = null;
-let activeListLink = null;
+var activeIndexLink = null;
+var activeListLink = null;
+
 async function loadStoryPage() {
     const url = window.location.pathname.replace(/\/?$/, '/');
     const {urlStory, urlTitle} = parseStoryUrl(url);
-    await loadStoryContent(url);
+    await loadStoryContent(urlStory, urlTitle);
     await loadStoryList(urlStory);
-    await loadStoryIndex(urlStory);
+    await loadStoryIndex(urlStory, urlTitle);
 }
 
-async function loadStoryContent(url) {
+async function loadStoryContent(urlStory, urlTitle) {
     const API_BASE = window.APP_CONFIG.API_BASE;
     const story = document.getElementById('story-story');
     const title = document.getElementById('story-title');
     const author = document.getElementById('story-author');
     const date = document.getElementById('story-date');
     const view = document.getElementById('story-view');
-    const {urlStory, urlTitle} = parseStoryUrl(url);
     if (!urlStory || !urlTitle) {
         story.textContent = 'Story';
         title.textContent = '';
@@ -24,16 +24,21 @@ async function loadStoryContent(url) {
         view.textContent = 'Welcome to Miao Story Room';
         return;
     }
-    const res = await fetch(`${API_BASE}/api/story/content?story=${encodeURIComponent(urlStory)}&title=${encodeURIComponent(urlTitle)}`);
-    const storyContent = await res.json();
-    story.textContent = storyContent.story;
-    title.textContent = storyContent.title;
-    author.textContent = storyContent.author;
-    date.textContent = storyContent.date;
-    view.textContent = storyContent.content;
+    try {
+        const res = await fetch(`${API_BASE}/api/story/content?story=${encodeURIComponent(urlStory)}&title=${encodeURIComponent(urlTitle)}`);
+        const storyContent = await res.json();
+        story.textContent = storyContent.story;
+        title.textContent = storyContent.title;
+        author.textContent = storyContent.author;
+        date.textContent = storyContent.date;
+        view.textContent = storyContent.content;
+    } catch (e) {
+        view.textContent = 'story error';
+        console.error('加载story content失败', e);
+    }
 }
 
-async function loadStoryList(activeStoryName) {
+async function loadStoryList(story) {
     activeListLink = null;
     const API_BASE = window.APP_CONFIG.API_BASE;
     const storyListElement = document.getElementById('story-list');
@@ -50,18 +55,20 @@ async function loadStoryList(activeStoryName) {
 
         storyList.forEach(storyItem => {
             const link = storyListElement.appendChild(document.createElement('div'));
-            link.className = 'story-side-story';
-            if (storyItem.story === activeStoryName) {
+            link.className = 'story-list-item';
+
+            const storyElement = link.appendChild(document.createElement('div'));
+            storyElement.className = 'story-list-story';
+            storyElement.textContent = storyItem.storySub ? `${storyItem.story}-${storyItem.storySub}` : storyItem.story;
+
+            const storyInfo = link.appendChild(document.createElement('div'));
+            storyInfo.className = 'story-list-story-info';
+            storyInfo.textContent = `${storyItem.count} 篇 · ${storyItem.latestTitle || ''}`;
+
+            if (storyItem.story === story) {
                 link.classList.add('active');
+                activeListLink = link;
             }
-
-            const storyName = link.appendChild(document.createElement('div'));
-            storyName.className = 'story-side-story-name';
-            storyName.textContent = storyItem.storySub ? `${storyItem.story}-${storyItem.storySub}` : storyItem.story;
-
-            const storyMeta = link.appendChild(document.createElement('div'));
-            storyMeta.className = 'story-side-story-meta';
-            storyMeta.textContent = `${storyItem.count} 篇 · ${storyItem.latestTitle || ''}`;
 
             link.addEventListener('click', async () => {
                 if (activeListLink) {
@@ -69,7 +76,7 @@ async function loadStoryList(activeStoryName) {
                 }
                 link.classList.add('active');
                 activeListLink = link;
-                await loadStoryIndex(storyItem);
+                await loadStoryIndex(storyItem.story, '');
             });
         });
     } catch (e) {
@@ -79,32 +86,38 @@ async function loadStoryList(activeStoryName) {
     }
 }
 
-async function loadStoryIndex(storyItem) {
+async function loadStoryIndex(story, title) {
     activeIndexLink = null;
     const API_BASE = window.APP_CONFIG.API_BASE;
     const storyIndexElement = document.getElementById('story-index');
 
     storyIndexElement.innerHTML = '';
-    if (!storyItem) {
+    if (!story) {
         storyIndexElement.textContent = 'Miao Story Index';
         return;
     }
 
     try {
-        const res = await fetch(`${API_BASE}/api/story/index?story=${encodeURIComponent(storyItem.story)}`);
-        const index = await res.json();
+        const res = await fetch(`${API_BASE}/api/story/index?story=${encodeURIComponent(story)}`);
+        const {index, ...storyInfo} = await res.json();
 
         const indexStory = storyIndexElement.appendChild(document.createElement('div'));
-        indexStory.className = 'index-story';
-        indexStory.textContent = storyItem.storySub ? `${storyItem.story}-${storyItem.storySub}` : storyItem.story;
+        indexStory.className = 'story-index-story';
+        indexStory.textContent = storyInfo.storySub ? `${storyInfo.story}-${storyInfo.storySub}` : storyInfo.story;
 
         index.forEach(titleItem => {
             const link = storyIndexElement.appendChild(document.createElement('a'));
-            link.className = 'index-link';
-            link.href = `/story/${encodeURIComponent(storyItem.story)}/${encodeURIComponent(titleItem.title)}/`;
-            const title = link.appendChild(document.createElement('div'));
-            title.className = 'index-title';
-            title.textContent = titleItem.titleSub ? `${titleItem.title}-${titleItem.titleSub}` : titleItem.title;
+            link.className = 'story-index-item';
+            link.href = `/story/${encodeURIComponent(story)}/${encodeURIComponent(titleItem.title)}/`;
+
+            const titleElement = link.appendChild(document.createElement('div'));
+            titleElement.className = 'story-index-title';
+            titleElement.textContent = titleItem.titleSub ? `${titleItem.title}-${titleItem.titleSub}` : titleItem.title;
+
+            if (titleItem.title === title) {
+                link.classList.add('active');
+                activeIndexLink = link;
+            }
 
             link.addEventListener('click', event => {
                 event.preventDefault();
@@ -123,20 +136,20 @@ async function loadStoryIndex(storyItem) {
 }
 
 async function loadStoryByUrl(url) {
-    await loadStoryContent(url);
+    const {urlStory, urlTitle} = parseStoryUrl(url);
+    await loadStoryContent(urlStory, urlTitle);
     history.replaceState(null, '', url);
 }
 
 function parseStoryUrl(url) {
-    if (!path.startsWith('/story/') || path === '/story/' || path === '/story/index.html/') {
+    if (!url.startsWith('/story/') || url === '/story/' || url === '/story/index.html/') {
         return {
-            urlStory: '',
-            urlTitle: ''
+            urlStory: '', urlTitle: ''
         };
     }
     const parts = decodeURI(url).replace(/^\/story\/|\/$/g, '').split('/');
     return {
-        urlStory: parts[0], urlTitle: parts[1]
+        urlStory: parts[0] || '', urlTitle: parts[1] || ''
     };
 }
 
