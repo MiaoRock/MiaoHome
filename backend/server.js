@@ -218,15 +218,15 @@ app.post('/api/admin/story/add', async (req, res) => {
         const filePath = path.join(storyDir, storyMain, `${titleMain}.md`);
         const storyInfoPath = path.join(storyDir, 'info', `${storyMain}.md`);
         const storyInfo = fs.existsSync(storyInfoPath) ? await fs.promises.readFile(storyInfoPath, 'utf8') : '';
-        const storyInfoContent = storyInfo.replace(FRONT_MATTER_REG, '').trim();
-        const storyEpisode = storyInfoContent ? JSON.parse(storyInfoContent) : [];
-        const episode = storyEpisode.find(episode => episode.title === title);
-        if (episode) {
-            episode.titleSub = titleSub;
-            episode.author = author;
-            episode.date = dateTime;
+        const storyInfoIndex = storyInfo.replace(FRONT_MATTER_REG, '').trim();
+        const storyIndex = storyInfoIndex ? JSON.parse(storyInfoIndex) : [];
+        const index = storyIndex.find(index => index.title === titleMain);
+        if (index) {
+            index.titleSub = titleSub;
+            index.author = author;
+            index.date = dateTime;
         } else {
-            storyEpisode.push({
+            storyIndex.push({
                 title: titleMain,
                 titleSub: titleSub,
                 author: author,
@@ -234,7 +234,7 @@ app.post('/api/admin/story/add', async (req, res) => {
             });
         }
 
-        const infoMarkdown = `---\nstory: ${storyMain}\nstorySub: ${storySub}\ncount: ${storyEpisode.length}\nlatestTitle: ${title}\nlatestDate: ${dateTime}\nauthor: ${author}\n---\n${JSON.stringify(storyEpisode, null, 4)}\n`;
+        const infoMarkdown = `---\nstory: ${storyMain}\nstorySub: ${storySub}\ncount: ${storyIndex.length}\nlatestTitle: ${title}\nlatestDate: ${dateTime}\nauthor: ${author}\n---\n${JSON.stringify(storyIndex, null, 4)}\n`;
         const markdown = `---\nstory: ${story}\ntitle: ${title}\nauthor: ${author}\ndate: ${dateTime}\n---\n${content.trimEnd()}\n`;
 
         await fs.promises.writeFile(storyInfoPath, infoMarkdown, 'utf8');

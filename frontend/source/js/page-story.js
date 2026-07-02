@@ -60,7 +60,7 @@ async function loadStoryList(story) {
 
             const storyElement = link.appendChild(document.createElement('div'));
             storyElement.className = 'story-list-story';
-            storyElement.textContent = storyItem.storySub ? `${storyItem.story}-${storyItem.storySub}` : storyItem.story;
+            storyElement.textContent = storyItem.storySub ? `${storyItem.story} - ${storyItem.storySub}` : storyItem.story;
 
             const storyAuthor = link.appendChild(document.createElement('div'));
             storyAuthor.className = 'story-list-line';
