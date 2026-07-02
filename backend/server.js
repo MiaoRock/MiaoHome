@@ -234,8 +234,8 @@ app.post('/api/admin/story/add', async (req, res) => {
             });
         }
 
-        const infoMarkdown = `---\nstory: ${storyMain}\nstorySub: ${storySub}\ncount: ${storyEpisode.length}\nlatestTitle: ${title}\nlatestDate: ${dateTime}\nauthor: ${author}\n---\n${JSON.stringify(storyEpisode, null, 4)}`;
-        const markdown = `---\nstory: ${story}\ntitle: ${title}\nauthor: ${author}\ndate: ${dateTime}\n---\n${content}`;
+        const infoMarkdown = `---\nstory: ${storyMain}\nstorySub: ${storySub}\ncount: ${storyEpisode.length}\nlatestTitle: ${title}\nlatestDate: ${dateTime}\nauthor: ${author}\n---\n${JSON.stringify(storyEpisode, null, 4)}\n`;
+        const markdown = `---\nstory: ${story}\ntitle: ${title}\nauthor: ${author}\ndate: ${dateTime}\n---\n${content.trimEnd()}\n`;
 
         await fs.promises.writeFile(storyInfoPath, infoMarkdown, 'utf8');
         await fs.promises.mkdir(path.dirname(filePath), {recursive: true});
