@@ -213,8 +213,8 @@ app.get('/api/story/index', async (req, res) => {
 app.post('/api/admin/story/add', async (req, res) => {
     try {
         const {storyMain, storySub, titleMain, titleSub, author, dateTime, content} = req.body;
-        const story = storySub ? `${storyMain}-${storySub}` : storyMain;
-        const title = titleSub ? `${titleMain}-${titleSub}` : titleMain;
+        const story = storySub ? `${storyMain} - ${storySub}` : storyMain;
+        const title = titleSub ? `${titleMain} - ${titleSub}` : titleMain;
         const filePath = path.join(storyDir, storyMain, `${titleMain}.md`);
         const storyInfoPath = path.join(storyDir, 'info', `${storyMain}.md`);
         const storyInfo = fs.existsSync(storyInfoPath) ? await fs.promises.readFile(storyInfoPath, 'utf8') : '';

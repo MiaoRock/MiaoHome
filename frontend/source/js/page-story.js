@@ -17,7 +17,7 @@ async function loadStoryContent(urlStory, urlTitle) {
     const date = document.getElementById('story-date');
     const view = document.getElementById('story-view');
     if (!urlStory || !urlTitle) {
-        story.textContent = 'Story';
+        story.textContent = 'Miao Story';
         title.textContent = '';
         author.textContent = '';
         date.textContent = '';
@@ -122,7 +122,7 @@ async function loadStoryIndex(story, title) {
 
         const indexStory = storyIndexElement.appendChild(document.createElement('div'));
         indexStory.className = 'story-index-story';
-        indexStory.textContent = storyInfo.storySub ? `${storyInfo.story}-${storyInfo.storySub}` : storyInfo.story;
+        indexStory.textContent = storyInfo.storySub ? `${storyInfo.story} - ${storyInfo.storySub}` : storyInfo.story;
 
         index.forEach(titleItem => {
             const link = storyIndexElement.appendChild(document.createElement('a'));
@@ -132,7 +132,7 @@ async function loadStoryIndex(story, title) {
             const titleElement = link.appendChild(document.createElement('div'));
             titleElement.className = 'story-index-title';
 
-            const titleText = titleItem.titleSub ? `${titleItem.title}-${titleItem.titleSub}` : titleItem.title;
+            const titleText = titleItem.titleSub ? `${titleItem.title} - ${titleItem.titleSub}` : titleItem.title;
             titleElement.textContent = titleText;
             link.title = titleText;
 
