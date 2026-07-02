@@ -50,6 +50,7 @@ async function loadStoryList(story) {
         const storyList = await res.json();
         if (!storyList.length) {
             storyListElement.textContent = 'no story';
+            updateStorySideHeight();
             return;
         }
 
@@ -61,16 +62,20 @@ async function loadStoryList(story) {
             storyElement.className = 'story-list-story';
             storyElement.textContent = storyItem.storySub ? `${storyItem.story}-${storyItem.storySub}` : storyItem.story;
 
+            const storyAuthor = link.appendChild(document.createElement('div'));
+            storyAuthor.className = 'story-list-author';
+            storyAuthor.textContent = storyItem.author ? `by ${storyItem.author}` : '';
+
             const storyInfo = link.appendChild(document.createElement('div'));
             storyInfo.className = 'story-list-story-info';
-            storyInfo.textContent = `${storyItem.count} 篇 · ${storyItem.latestDate || ''}`;
+            storyInfo.textContent = `${storyItem.count} 篇`;
 
             const storyLatest = link.appendChild(document.createElement('div'));
             storyLatest.className = 'story-list-latest';
 
             let latestText = storyItem.latestTitle || '';
-            if (storyItem.author) {
-                latestText += ` by ${storyItem.author}`;
+            if (storyItem.latestDate) {
+                latestText += `｜${storyItem.latestDate}`;
             }
             storyLatest.textContent = latestText ? `最新｜${latestText}` : '';
 
@@ -86,7 +91,6 @@ async function loadStoryList(story) {
                 link.classList.add('active');
                 activeListLink = link;
                 await loadStoryIndex(storyItem.story, '');
-                updateStorySideHeight();
             });
         });
         updateStorySideHeight();
@@ -105,6 +109,7 @@ async function loadStoryIndex(story, title) {
     storyIndexElement.innerHTML = '';
     if (!story) {
         storyIndexElement.textContent = 'Miao Story Index';
+        updateStorySideHeight();
         return;
     }
 
@@ -121,17 +126,6 @@ async function loadStoryIndex(story, title) {
             link.className = 'story-index-item';
             link.href = `/story/${encodeURIComponent(story)}/${encodeURIComponent(titleItem.title)}/`;
 
-            const timeElement = link.appendChild(document.createElement('div'));
-            timeElement.className = 'story-index-time';
-
-            const icon = timeElement.appendChild(document.createElement('i'));
-            icon.className = 'far fa-calendar-alt';
-
-            const time = timeElement.appendChild(document.createElement('time'));
-            time.className = 'story-index-date';
-            time.setAttribute('datetime', titleItem.date || '');
-            time.textContent = titleItem.date || '';
-
             const titleElement = link.appendChild(document.createElement('div'));
             titleElement.className = 'story-index-title';
 
@@ -141,7 +135,12 @@ async function loadStoryIndex(story, title) {
             }
 
             titleElement.textContent = titleText;
-            link.title = titleText;
+
+            const metaElement = link.appendChild(document.createElement('div'));
+            metaElement.className = 'story-index-meta';
+            metaElement.textContent = titleItem.date || '';
+
+            link.title = titleItem.date ? `${titleText}｜${titleItem.date}` : titleText;
 
             if (titleItem.title === title) {
                 link.classList.add('active');
@@ -158,6 +157,7 @@ async function loadStoryIndex(story, title) {
                 loadStoryByUrl(link.getAttribute('href'));
             });
         });
+        updateStorySideHeight();
     } catch (e) {
         storyIndexElement.innerHTML = '<div>index error</div>';
         console.error('加载story index失败', e);
@@ -168,6 +168,7 @@ async function loadStoryByUrl(url) {
     const {urlStory, urlTitle} = parseStoryUrl(url);
     await loadStoryContent(urlStory, urlTitle);
     history.replaceState(null, '', url);
+    updateStorySideHeight();
 }
 
 function parseStoryUrl(url) {
@@ -191,9 +192,13 @@ function updateStorySideHeight() {
     }
 
     storyList.style.transform = '';
+    storyList.style.height = '';
+    storyIndex.style.height = '';
+    storyList.style.overflowY = 'hidden';
+    storyIndex.style.overflowY = 'hidden';
 
     const top = 60 + window.innerWidth * 0.012;
-    const gap = 16;
+    const gap = 0;
 
     const maxListHeight = window.innerHeight * 0.6;
     const minListHeight = window.innerHeight * 0.2;
@@ -201,16 +206,27 @@ function updateStorySideHeight() {
     const shrinkDistance = window.innerHeight * 0.4;
     const shrinkRate = Math.min(window.scrollY, shrinkDistance) / shrinkDistance;
 
-    const listHeight = maxListHeight - (maxListHeight - minListHeight) * shrinkRate;
+    const listLimitHeight = maxListHeight - (maxListHeight - minListHeight) * shrinkRate;
+    const listContentHeight = storyList.scrollHeight;
 
     storyList.style.top = `${top}px`;
-    storyList.style.height = `${listHeight}px`;
 
-    const indexTop = top + storyList.getBoundingClientRect().height + gap;
-    const indexHeight = window.innerHeight - indexTop;
+    if (listContentHeight > listLimitHeight + 2) {
+        storyList.style.height = `${listLimitHeight}px`;
+        storyList.style.overflowY = 'auto';
+    }
+
+    const listRealHeight = storyList.getBoundingClientRect().height;
+    const indexTop = top + listRealHeight + gap;
+    const indexLimitHeight = Math.max(0, window.innerHeight - indexTop);
+    const indexContentHeight = storyIndex.scrollHeight;
 
     storyIndex.style.top = `${indexTop}px`;
-    storyIndex.style.height = `${indexHeight}px`;
+
+    if (indexContentHeight > indexLimitHeight + 2) {
+        storyIndex.style.height = `${indexLimitHeight}px`;
+        storyIndex.style.overflowY = 'auto';
+    }
 
     const indexRealTop = storyIndex.getBoundingClientRect().top;
     const pushUp = indexTop - indexRealTop;
@@ -219,14 +235,20 @@ function updateStorySideHeight() {
         storyList.style.transform = `translateY(-${pushUp}px)`;
     }
 
-    if (listHeight <= minListHeight + 1 && activeListLink) {
+    if (listContentHeight > minListHeight && listLimitHeight <= minListHeight + 1 && activeListLink) {
         storyList.classList.add('compact');
     } else {
         storyList.classList.remove('compact');
     }
 }
 
-window.addEventListener('scroll', updateStorySideHeight);
-window.addEventListener('resize', updateStorySideHeight);
+if (window.storySideScrollHandler) {
+    window.removeEventListener('scroll', window.storySideScrollHandler);
+    window.removeEventListener('resize', window.storySideScrollHandler);
+}
+
+window.storySideScrollHandler = updateStorySideHeight;
+window.addEventListener('scroll', window.storySideScrollHandler);
+window.addEventListener('resize', window.storySideScrollHandler);
 
 loadStoryPage();
