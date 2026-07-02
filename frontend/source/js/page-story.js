@@ -190,10 +190,26 @@ function updateStoryHeight() {
     storyList.style.overflowY = 'hidden';
     storyIndex.style.overflowY = 'hidden';
 
+    storyList.classList.remove('compact');
+
     const top = 60 + window.innerWidth * 0.012;
     const gap = 0;
+
     const maxListHeight = window.innerHeight * 0.6;
-    const minListHeight = window.innerHeight * 0.2;
+
+    const listStyle = window.getComputedStyle(storyList);
+    const listPaddingTop = parseFloat(listStyle.paddingTop) || 0;
+    const listPaddingBottom = parseFloat(listStyle.paddingBottom) || 0;
+    const listVerticalPadding = listPaddingTop + listPaddingBottom;
+
+    const activeListHeight = activeListLink ? activeListLink.getBoundingClientRect().height : 0;
+    const compactListHeight = activeListHeight + listVerticalPadding;
+
+    const minListHeight = Math.min(
+        maxListHeight,
+        Math.max(window.innerHeight * 0.2, compactListHeight)
+    );
+
     const shrinkDistance = window.innerHeight * 0.4;
     const shrinkRate = Math.min(window.scrollY, shrinkDistance) / shrinkDistance;
     const listLimitHeight = maxListHeight - (maxListHeight - minListHeight) * shrinkRate;
@@ -225,8 +241,7 @@ function updateStoryHeight() {
 
     if (listContentHeight > minListHeight && listLimitHeight <= minListHeight + 1 && activeListLink) {
         storyList.classList.add('compact');
-    } else {
-        storyList.classList.remove('compact');
+        storyList.style.overflowY = 'hidden';
     }
 }
 
