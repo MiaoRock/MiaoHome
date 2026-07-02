@@ -408,18 +408,25 @@
     user-select: none;
 }
 
+#gallery-list {
+    position: sticky;
+    top: calc(60px + 1.2vw);
+    max-height: calc(100vh - 60px - 1.2vw);
+    overflow-y: auto;
+}
+
 /* story page */
 #story-story {
     font-size: 1.5vw;
     font-weight: 700;
-    line-height: 1.5;
+    line-height: 2vw;
     margin-bottom: 0.5vw;
 }
 
 #story-title {
     font-size: 1.2vw;
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.8vw;
     margin-bottom: 0.5vw;
 }
 
@@ -439,40 +446,28 @@
 #story-view {
     margin-top: 1vw;
     font-size: 1vw;
-    line-height: 1.8;
+    line-height: 2vw;
     white-space: pre-wrap;
     word-break: break-word;
-}
-
-#gallery-list {
-    position: sticky;
-    top: calc(60px + 1.2vw);
-    max-height: calc(100vh - 60px - 1.2vw);
-    overflow-y: auto;
 }
 
 #story-list,
 #story-index {
     display: flex;
     flex-direction: column;
-    gap: 8px;
     overflow-y: hidden;
+    box-sizing: border-box;
+    position: sticky;
+    gap: 0.8vw;
 }
 
 #story-list {
-    position: sticky;
     top: calc(60px + 1.2vw);
-    margin-bottom: 0;
-}
-
-#story-index {
-    position: sticky;
 }
 
 .story-list-item,
 .story-index-item {
     cursor: pointer;
-    padding: 6px 0;
     text-decoration: none;
 }
 
@@ -483,19 +478,22 @@
 
 .story-list-story,
 .story-index-story {
-    font-size: 15px;
+    font-size: 1.2vw;
+    line-height: 1.5vw;
 }
 
-.story-list-story-info,
-.story-list-latest,
-.story-index-time,
-.story-index-meta {
-    font-size: 12px;
-    opacity: 0.7;
+.story-list-line {
+    font-size: 0.8vw;
+    line-height: 1.2vw;
+    opacity: 0.9;
 }
 
 .story-index-title {
-    font-size: 14px;
+    font-size: 1vw;
+    line-height: 1.2vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #story-list.compact .story-list-item:not(.active) {

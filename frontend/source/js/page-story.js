@@ -50,7 +50,7 @@ async function loadStoryList(story) {
         const storyList = await res.json();
         if (!storyList.length) {
             storyListElement.textContent = 'no story';
-            updateStorySideHeight();
+            updateStoryHeight();
             return;
         }
 
@@ -63,21 +63,24 @@ async function loadStoryList(story) {
             storyElement.textContent = storyItem.storySub ? `${storyItem.story}-${storyItem.storySub}` : storyItem.story;
 
             const storyAuthor = link.appendChild(document.createElement('div'));
-            storyAuthor.className = 'story-list-author';
-            storyAuthor.textContent = storyItem.author ? `by ${storyItem.author}` : '';
+            storyAuthor.className = 'story-list-line';
+            storyAuthor.textContent = storyItem.author ? `作者：${storyItem.author}` : '作者：无';
 
             const storyInfo = link.appendChild(document.createElement('div'));
-            storyInfo.className = 'story-list-story-info';
-            storyInfo.textContent = `${storyItem.count} 篇`;
+            storyInfo.className = 'story-list-line';
+            storyInfo.textContent = `已发布 ${storyItem.count} 篇`;
 
             const storyLatest = link.appendChild(document.createElement('div'));
-            storyLatest.className = 'story-list-latest';
+            storyLatest.className = 'story-list-line';
+            storyLatest.textContent = '最近更新：';
 
-            let latestText = storyItem.latestTitle || '';
-            if (storyItem.latestDate) {
-                latestText += `｜${storyItem.latestDate}`;
-            }
-            storyLatest.textContent = latestText ? `最新｜${latestText}` : '';
+            const storyLatestTitle = link.appendChild(document.createElement('div'));
+            storyLatestTitle.className = 'story-list-line';
+            storyLatestTitle.textContent = storyItem.latestTitle;
+
+            const storyLatestDate = link.appendChild(document.createElement('div'));
+            storyLatestDate.className = 'story-list-line';
+            storyLatestDate.textContent = storyItem.latestDate;
 
             if (storyItem.story === story) {
                 link.classList.add('active');
@@ -93,7 +96,7 @@ async function loadStoryList(story) {
                 await loadStoryIndex(storyItem.story, '');
             });
         });
-        updateStorySideHeight();
+        updateStoryHeight();
     } catch (e) {
         storyListElement.innerHTML = '<div>story error</div>';
         console.error('加载story list失败', e);
@@ -109,7 +112,7 @@ async function loadStoryIndex(story, title) {
     storyIndexElement.innerHTML = '';
     if (!story) {
         storyIndexElement.textContent = 'Miao Story Index';
-        updateStorySideHeight();
+        updateStoryHeight();
         return;
     }
 
@@ -129,18 +132,9 @@ async function loadStoryIndex(story, title) {
             const titleElement = link.appendChild(document.createElement('div'));
             titleElement.className = 'story-index-title';
 
-            let titleText = titleItem.titleSub ? `${titleItem.title}-${titleItem.titleSub}` : titleItem.title;
-            if (titleItem.author) {
-                titleText += ` by ${titleItem.author}`;
-            }
-
+            const titleText = titleItem.titleSub ? `${titleItem.title}-${titleItem.titleSub}` : titleItem.title;
             titleElement.textContent = titleText;
-
-            const metaElement = link.appendChild(document.createElement('div'));
-            metaElement.className = 'story-index-meta';
-            metaElement.textContent = titleItem.date || '';
-
-            link.title = titleItem.date ? `${titleText}｜${titleItem.date}` : titleText;
+            link.title = titleText;
 
             if (titleItem.title === title) {
                 link.classList.add('active');
@@ -157,7 +151,7 @@ async function loadStoryIndex(story, title) {
                 loadStoryByUrl(link.getAttribute('href'));
             });
         });
-        updateStorySideHeight();
+        updateStoryHeight();
     } catch (e) {
         storyIndexElement.innerHTML = '<div>index error</div>';
         console.error('加载story index失败', e);
@@ -168,7 +162,7 @@ async function loadStoryByUrl(url) {
     const {urlStory, urlTitle} = parseStoryUrl(url);
     await loadStoryContent(urlStory, urlTitle);
     history.replaceState(null, '', url);
-    updateStorySideHeight();
+    updateStoryHeight();
 }
 
 function parseStoryUrl(url) {
@@ -183,10 +177,9 @@ function parseStoryUrl(url) {
     };
 }
 
-function updateStorySideHeight() {
+function updateStoryHeight() {
     const storyList = document.getElementById('story-list');
     const storyIndex = document.getElementById('story-index');
-
     if (!storyList || !storyIndex) {
         return;
     }
@@ -199,18 +192,14 @@ function updateStorySideHeight() {
 
     const top = 60 + window.innerWidth * 0.012;
     const gap = 0;
-
     const maxListHeight = window.innerHeight * 0.6;
     const minListHeight = window.innerHeight * 0.2;
-
     const shrinkDistance = window.innerHeight * 0.4;
     const shrinkRate = Math.min(window.scrollY, shrinkDistance) / shrinkDistance;
-
     const listLimitHeight = maxListHeight - (maxListHeight - minListHeight) * shrinkRate;
     const listContentHeight = storyList.scrollHeight;
 
     storyList.style.top = `${top}px`;
-
     if (listContentHeight > listLimitHeight + 2) {
         storyList.style.height = `${listLimitHeight}px`;
         storyList.style.overflowY = 'auto';
@@ -222,7 +211,6 @@ function updateStorySideHeight() {
     const indexContentHeight = storyIndex.scrollHeight;
 
     storyIndex.style.top = `${indexTop}px`;
-
     if (indexContentHeight > indexLimitHeight + 2) {
         storyIndex.style.height = `${indexLimitHeight}px`;
         storyIndex.style.overflowY = 'auto';
@@ -242,13 +230,13 @@ function updateStorySideHeight() {
     }
 }
 
-if (window.storySideScrollHandler) {
-    window.removeEventListener('scroll', window.storySideScrollHandler);
-    window.removeEventListener('resize', window.storySideScrollHandler);
+if (window.storyScrollHandler) {
+    window.removeEventListener('scroll', window.storyScrollHandler);
+    window.removeEventListener('resize', window.storyScrollHandler);
 }
 
-window.storySideScrollHandler = updateStorySideHeight;
-window.addEventListener('scroll', window.storySideScrollHandler);
-window.addEventListener('resize', window.storySideScrollHandler);
+window.storyScrollHandler = updateStoryHeight;
+window.addEventListener('scroll', window.storyScrollHandler);
+window.addEventListener('resize', window.storyScrollHandler);
 
 loadStoryPage();
