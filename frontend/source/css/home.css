@@ -485,7 +485,8 @@
     width: fit-content;
     max-width: 100%;
     cursor: pointer;
-    transition: translateX 0.4s ease;
+    transition: transform 0.4s ease;
+    display: flex;
 }
 
 #story-index .story-index-item:hover {

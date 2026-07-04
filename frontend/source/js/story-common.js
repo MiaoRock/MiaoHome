@@ -9,14 +9,6 @@ if (!window.MiaoStory.storyScrollHandler) {
     window.addEventListener('resize', window.MiaoStory.storyScrollHandler);
 }
 
-async function loadStoryPage() {
-    const url = window.location.pathname.replace(/\/?$/, '/');
-    const {urlStory, urlTitle} = parseStoryUrl(url);
-    await loadStoryContent(urlStory, urlTitle);
-    await loadStoryList(urlStory);
-    await loadStoryIndex(urlStory, urlTitle);
-}
-
 async function loadStoryContent(urlStory, urlTitle) {
     const API_BASE = window.APP_CONFIG.API_BASE;
     const story = document.getElementById('story-story');
@@ -53,6 +45,16 @@ async function loadStoryList(story) {
 
     storyListElement.innerHTML = '';
 
+    if (storyListElement.dataset.page === 'admin') {
+        const addDiv = storyListElement.appendChild(document.createElement('div'));
+        addDiv.className = 'story-add-open';
+        addDiv.textContent = '新增';
+
+        addDiv.addEventListener('click', () => {
+            document.getElementById('story-add').classList.add('show');
+        });
+    }
+
     try {
         const res = await fetch(`${API_BASE}/api/story/list`);
         const storyList = await res.json();
@@ -73,20 +75,20 @@ async function loadStoryList(story) {
             const storyInfoLine = link.appendChild(document.createElement('div'));
             storyInfoLine.className = 'story-list-line';
 
-            const storyAuthor = storyInfoLine.appendChild(document.createElement('span'));
-            storyAuthor.textContent = storyItem.author ? `作者：${storyItem.author}` : '';
-
             const storyInfo = storyInfoLine.appendChild(document.createElement('span'));
             storyInfo.textContent = `已发布 ${storyItem.count} 篇`;
+
+            const storyAuthor = storyInfoLine.appendChild(document.createElement('span'));
+            storyAuthor.textContent = storyItem.author ? `作者：${storyItem.author}` : '';
 
             const storyLatestLine = link.appendChild(document.createElement('div'));
             storyLatestLine.className = 'story-list-line';
 
-            const storyLatestTitle = storyLatestLine.appendChild(document.createElement('span'));
-            storyLatestTitle.textContent = `最新：${storyItem.latestTitle}`;
-
             const storyLatestDate = storyLatestLine.appendChild(document.createElement('span'));
-            storyLatestDate.textContent = storyItem.latestDate;
+            storyLatestDate.textContent = `最新：${storyItem.latestDate}`;
+
+            const storyLatestTitle = storyLatestLine.appendChild(document.createElement('span'));
+            storyLatestTitle.textContent = `${storyItem.latestTitle}`;
 
             if (storyItem.story === story) {
                 link.classList.add('active');
