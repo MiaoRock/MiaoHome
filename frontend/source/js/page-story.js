@@ -82,11 +82,8 @@ async function loadStoryList(story) {
             const storyLatestLine = link.appendChild(document.createElement('div'));
             storyLatestLine.className = 'story-list-line';
 
-            const storyLatestLabel = storyLatestLine.appendChild(document.createElement('span'));
-            storyLatestLabel.textContent = '最新：';
-
             const storyLatestTitle = storyLatestLine.appendChild(document.createElement('span'));
-            storyLatestTitle.textContent = storyItem.latestTitle;
+            storyLatestTitle.textContent = `最新：${storyItem.latestTitle}`;
 
             const storyLatestDate = storyLatestLine.appendChild(document.createElement('span'));
             storyLatestDate.textContent = storyItem.latestDate;
