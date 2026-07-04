@@ -70,24 +70,25 @@ async function loadStoryList(story) {
             storyElement.className = 'story-list-story';
             storyElement.textContent = storyItem.storySub ? `${storyItem.story} - ${storyItem.storySub}` : storyItem.story;
 
-            const storyAuthor = link.appendChild(document.createElement('div'));
-            storyAuthor.className = 'story-list-line';
-            storyAuthor.textContent = storyItem.author ? `作者：${storyItem.author}` : '作者：无';
+            const storyInfoLine = link.appendChild(document.createElement('div'));
+            storyInfoLine.className = 'story-list-line';
 
-            const storyInfo = link.appendChild(document.createElement('div'));
-            storyInfo.className = 'story-list-line';
+            const storyAuthor = storyInfoLine.appendChild(document.createElement('span'));
+            storyAuthor.textContent = storyItem.author ? `作者：${storyItem.author}` : '';
+
+            const storyInfo = storyInfoLine.appendChild(document.createElement('span'));
             storyInfo.textContent = `已发布 ${storyItem.count} 篇`;
 
-            const storyLatest = link.appendChild(document.createElement('div'));
-            storyLatest.className = 'story-list-line';
-            storyLatest.textContent = '最近更新：';
+            const storyLatestLine = link.appendChild(document.createElement('div'));
+            storyLatestLine.className = 'story-list-line';
 
-            const storyLatestTitle = link.appendChild(document.createElement('div'));
-            storyLatestTitle.className = 'story-list-line';
+            const storyLatestLabel = storyLatestLine.appendChild(document.createElement('span'));
+            storyLatestLabel.textContent = '最新：';
+
+            const storyLatestTitle = storyLatestLine.appendChild(document.createElement('span'));
             storyLatestTitle.textContent = storyItem.latestTitle;
 
-            const storyLatestDate = link.appendChild(document.createElement('div'));
-            storyLatestDate.className = 'story-list-line';
+            const storyLatestDate = storyLatestLine.appendChild(document.createElement('span'));
             storyLatestDate.textContent = storyItem.latestDate;
 
             if (storyItem.story === story) {

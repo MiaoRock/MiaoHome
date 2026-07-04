@@ -83,7 +83,7 @@
     width: 100%;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 30fr 10fr;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
     gap: 1.2vw;
 }
 
@@ -483,9 +483,16 @@
 }
 
 .story-list-line {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.6vw;
     font-size: 0.8vw;
     line-height: 1.2vw;
     opacity: 0.9;
+}
+
+.story-list-line span {
+    max-width: 100%;
 }
 
 .story-index-title {
