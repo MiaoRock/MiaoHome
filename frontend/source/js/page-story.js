@@ -1,5 +1,13 @@
-var activeIndexLink = null;
-var activeListLink = null;
+window.MiaoStory = window.MiaoStory || {};
+
+window.MiaoStory.activeIndexLink = null;
+window.MiaoStory.activeListLink = null;
+
+if (!window.MiaoStory.storyScrollHandler) {
+    window.MiaoStory.storyScrollHandler = updateStoryHeight;
+    window.addEventListener('scroll', window.MiaoStory.storyScrollHandler);
+    window.addEventListener('resize', window.MiaoStory.storyScrollHandler);
+}
 
 async function loadStoryPage() {
     const url = window.location.pathname.replace(/\/?$/, '/');
@@ -39,7 +47,7 @@ async function loadStoryContent(urlStory, urlTitle) {
 }
 
 async function loadStoryList(story) {
-    activeListLink = null;
+    window.MiaoStory.activeListLink = null;
     const API_BASE = window.APP_CONFIG.API_BASE;
     const storyListElement = document.getElementById('story-list');
 
@@ -84,15 +92,15 @@ async function loadStoryList(story) {
 
             if (storyItem.story === story) {
                 link.classList.add('active');
-                activeListLink = link;
+                window.MiaoStory.activeListLink = link;
             }
 
             link.addEventListener('click', async () => {
-                if (activeListLink) {
-                    activeListLink.classList.remove('active');
+                if (window.MiaoStory.activeListLink) {
+                    window.MiaoStory.activeListLink.classList.remove('active');
                 }
                 link.classList.add('active');
-                activeListLink = link;
+                window.MiaoStory.activeListLink = link;
                 await loadStoryIndex(storyItem.story, '');
             });
         });
@@ -105,7 +113,7 @@ async function loadStoryList(story) {
 }
 
 async function loadStoryIndex(story, title) {
-    activeIndexLink = null;
+    window.MiaoStory.activeIndexLink = null;
     const API_BASE = window.APP_CONFIG.API_BASE;
     const storyIndexElement = document.getElementById('story-index');
 
@@ -138,16 +146,16 @@ async function loadStoryIndex(story, title) {
 
             if (titleItem.title === title) {
                 link.classList.add('active');
-                activeIndexLink = link;
+                window.MiaoStory.activeIndexLink = link;
             }
 
             link.addEventListener('click', event => {
                 event.preventDefault();
-                if (activeIndexLink) {
-                    activeIndexLink.classList.remove('active');
+                if (window.MiaoStory.activeIndexLink) {
+                    window.MiaoStory.activeIndexLink.classList.remove('active');
                 }
                 link.classList.add('active');
-                activeIndexLink = link;
+                window.MiaoStory.activeIndexLink = link;
                 loadStoryByUrl(link.getAttribute('href'));
             });
         });
@@ -202,7 +210,7 @@ function updateStoryHeight() {
     const listPaddingBottom = parseFloat(listStyle.paddingBottom) || 0;
     const listVerticalPadding = listPaddingTop + listPaddingBottom;
 
-    const activeListHeight = activeListLink ? activeListLink.getBoundingClientRect().height : 0;
+    const activeListHeight = window.MiaoStory.activeListLink ? window.MiaoStory.activeListLink.getBoundingClientRect().height : 0;
     const compactListHeight = activeListHeight + listVerticalPadding;
 
     const minListHeight = Math.min(
@@ -239,19 +247,10 @@ function updateStoryHeight() {
         storyList.style.transform = `translateY(-${pushUp}px)`;
     }
 
-    if (listContentHeight > minListHeight && listLimitHeight <= minListHeight + 1 && activeListLink) {
+    if (listContentHeight > minListHeight && listLimitHeight <= minListHeight + 1 && window.MiaoStory.activeListLink) {
         storyList.classList.add('compact');
         storyList.style.overflowY = 'hidden';
     }
 }
-
-if (window.storyScrollHandler) {
-    window.removeEventListener('scroll', window.storyScrollHandler);
-    window.removeEventListener('resize', window.storyScrollHandler);
-}
-
-window.storyScrollHandler = updateStoryHeight;
-window.addEventListener('scroll', window.storyScrollHandler);
-window.addEventListener('resize', window.storyScrollHandler);
 
 loadStoryPage();
