@@ -7,7 +7,7 @@ comments: false
 permalink: /story/index.html
 ---
 
-<script src="/js/config.js"></script>
+<script src="/js/miao-common.js"></script>
 <div id="miao-container">
     <div id="miao-info"></div>
     <script src="/js/info.js"></script>
@@ -25,6 +25,7 @@ permalink: /story/index.html
             <div id="story-list" class="miao-card"></div>
             <div id="story-index" class="miao-card"></div>
         </div>
+        <script src="/js/story-common.js"></script>
         <script src="/js/page-story.js"></script>
     </div>
 </div>

@@ -7,7 +7,7 @@ comments: false
 permalink: /index.html
 ---
 
-<script src="/js/config.js"></script>
+<script src="/js/miao-common.js"></script>
 <div id="miao-container">
     <div id="miao-info"></div>
     <script src="/js/info.js"></script>

@@ -83,15 +83,7 @@ async function loadGallery() {
             columnHeights[targetIndex] += rect.height + gap;
         });
 
-        if (window.pjax) {
-            window.pjax.refresh(galleryWall);
-        } else {
-            window.addEventListener('load', () => {
-                if (window.pjax) {
-                    window.pjax.refresh(galleryWall);
-                }
-            }, {once: true});
-        }
+        window.miaoRefreshPjax(galleryWall);
     } catch (e) {
         galleryWall.innerHTML = '<div>gallery error</div>';
         console.error('加载图片失败', e);

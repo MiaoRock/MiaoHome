@@ -82,15 +82,7 @@ async function loadStory() {
             yearDiv.textContent = month;
         });
 
-        if (window.pjax) {
-            window.pjax.refresh(storyTimeline);
-        } else {
-            window.addEventListener('load',  () => {
-                if (window.pjax) {
-                    window.pjax.refresh(storyTimeline);
-                }
-            }, {once: true});
-        }
+        window.miaoRefreshPjax(storyTimeline);
     } catch (e) {
         storyTimeline.innerHTML = '<div>story error</div>';
         console.error('加载文章失败', e);
