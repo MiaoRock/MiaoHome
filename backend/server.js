@@ -95,7 +95,7 @@ app.post('/api/admin/gallery/touch', async (req, res) => {
     }
 });
 
-app.get('/api/story', async (req, res) => {
+app.get('/api/story/timeline', async (req, res) => {
     try {
         const infoDir = path.join(storyDir, 'info');
         const files = await fs.promises.readdir(infoDir);
@@ -109,8 +109,7 @@ app.get('/api/story', async (req, res) => {
             const fm = parseFrontMatter(content);
 
             const storyMain = fm.story || file.replace(/\.md$/, '');
-            const storySub = fm.storySub && fm.storySub !== 'undefined' ? fm.storySub : '';
-            const story = storySub ? `${storyMain} - ${storySub}` : storyMain;
+            const storySub = fm.storySub || '';
 
             const storyInfoIndex = content.replace(FRONT_MATTER_REG, '').trim();
             const storyIndex = storyInfoIndex ? JSON.parse(storyInfoIndex) : [];
@@ -118,7 +117,6 @@ app.get('/api/story', async (req, res) => {
             storyIndex.forEach(index => {
                 const titleMain = index.title || '';
                 const titleSub = index.titleSub || '';
-                const title = titleSub ? `${titleMain} - ${titleSub}` : titleMain;
                 const rawDateText = index.date || '';
                 const author = index.author || '';
 
@@ -134,7 +132,7 @@ app.get('/api/story', async (req, res) => {
                 const url = '/story/' + encodeURIComponent(storyMain) + '/' + encodeURIComponent(titleMain) + '/';
 
                 timeline.push({
-                    story, title, author, date, time, yearMonth, url
+                    storyMain, storySub, titleMain, titleSub, author, date, time, yearMonth, url
                 });
             });
         });
@@ -143,7 +141,7 @@ app.get('/api/story', async (req, res) => {
         res.json(sortedList);
     } catch (err) {
         console.error('查询Story失败', err);
-        res.status(500).json({ error: 'no story' });
+        res.status(500).json({error: 'no story'});
     }
 });
 
@@ -155,11 +153,7 @@ app.get('/api/story/content', async (req, res) => {
         const fm = parseFrontMatter(mdText);
         const content = mdText.replace(FRONT_MATTER_REG, '');
         res.json({
-            story: fm.story || '',
-            title: fm.title || '',
-            author: fm.author || '',
-            date: fm.date || '',
-            content: content
+            story: fm.story || '', title: fm.title || '', author: fm.author || '', date: fm.date || '', content: content
         });
     } catch (err) {
         console.error('查询Story Content失败', err);
@@ -231,10 +225,7 @@ app.post('/api/admin/story/add', async (req, res) => {
             index.date = dateTime;
         } else {
             storyIndex.push({
-                title: titleMain,
-                titleSub: titleSub,
-                author: author,
-                date: dateTime,
+                title: titleMain, titleSub: titleSub, author: author, date: dateTime,
             });
         }
 
