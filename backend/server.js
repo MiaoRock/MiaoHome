@@ -97,27 +97,30 @@ app.post('/api/admin/gallery/touch', async (req, res) => {
 
 app.get('/api/story', async (req, res) => {
     try {
-        const dirs = await fs.promises.readdir(storyDir, {withFileTypes: true});
+        const infoDir = path.join(storyDir, 'info');
+        const files = await fs.promises.readdir(infoDir);
         const timeline = [];
 
-        for (const dir of dirs) {
-            if (!dir.isDirectory() || dir.name === 'info') {
-                continue;
-            }
+        const markdownFiles = files.filter(file => file.endsWith('.md'));
 
-            const storyPath = path.join(storyDir, dir.name);
-            const files = await fs.promises.readdir(storyPath);
-            const markdownFiles = files.filter(file => file.endsWith('.md'));
+        markdownFiles.forEach(file => {
+            const filePath = path.join(infoDir, file);
+            const content = fs.readFileSync(filePath, 'utf8');
+            const fm = parseFrontMatter(content);
 
-            markdownFiles.forEach(file => {
-                const filePath = path.join(storyPath, file);
-                const content = fs.readFileSync(filePath, 'utf8');
-                const fm = parseFrontMatter(content);
+            const storyMain = fm.story || file.replace(/\.md$/, '');
+            const storySub = fm.storySub && fm.storySub !== 'undefined' ? fm.storySub : '';
+            const story = storySub ? `${storyMain} - ${storySub}` : storyMain;
 
-                const story = fm.story || '';
-                const title = fm.title || '';
-                const rawDateText = fm.date || '';
-                const author = fm.author || '';
+            const storyInfoIndex = content.replace(FRONT_MATTER_REG, '').trim();
+            const storyIndex = storyInfoIndex ? JSON.parse(storyInfoIndex) : [];
+
+            storyIndex.forEach(index => {
+                const titleMain = index.title || '';
+                const titleSub = index.titleSub || '';
+                const title = titleSub ? `${titleMain} - ${titleSub}` : titleMain;
+                const rawDateText = index.date || '';
+                const author = index.author || '';
 
                 const date = rawDateText.trim()
                     .replace(/^(\d{4})-(\d{1,2})-(\d{1,2})(.*)$/, (m, y, month, day, rest) => {
@@ -127,19 +130,20 @@ app.get('/api/story', async (req, res) => {
                 const parseDateText = date.replace(/\s+/, 'T');
                 const time = new Date(parseDateText).getTime() || 0;
                 const yearMonth = String(parseDateText).slice(0, 7);
-                const url = '/story/' + encodeURIComponent(dir.name) + '/' + encodeURIComponent(file.replace(/\.md$/, '')) + '/';
+
+                const url = '/story/' + encodeURIComponent(storyMain) + '/' + encodeURIComponent(titleMain) + '/';
 
                 timeline.push({
                     story, title, author, date, time, yearMonth, url
                 });
             });
-        }
+        });
 
         const sortedList = timeline.sort((a, b) => b.time - a.time);
         res.json(sortedList);
     } catch (err) {
         console.error('查询Story失败', err);
-        res.status(500).json({error: 'no story'});
+        res.status(500).json({ error: 'no story' });
     }
 });
 
