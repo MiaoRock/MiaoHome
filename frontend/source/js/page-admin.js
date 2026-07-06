@@ -158,7 +158,7 @@ async function loadStoryAdd() {
                 return;
             }
             message.textContent = '保存成功';
-            await loadStory();
+            await loadStoryListIndex(storyMain, titleMain);
         } catch (e) {
             message.textContent = '保存失败';
             console.error('新增Story失败', e);

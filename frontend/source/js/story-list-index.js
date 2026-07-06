@@ -1,6 +1,6 @@
-async function loadStoryListIndex() {
-    await loadStoryList('');
-    await loadStoryIndex('', '');
+async function loadStoryListIndex(story, title) {
+    await loadStoryList(story);
+    await loadStoryIndex(story, title);
 }
 
-loadStoryListIndex();
+loadStoryListIndex('', '');
