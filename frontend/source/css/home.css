@@ -462,23 +462,18 @@
 
 #story-list {
     top: calc(60px + 1.2vw);
-    gap: 0.6vw;
+    gap: 1.4vw;
 }
 
 .story-list-item {
     cursor: pointer;
     border-radius: 0.3vw;
-    outline: 1px dashed #777;
-    outline-offset: 0.2vw;
-    transition: transform 0.4s ease, outline-offset 0.4s ease;
-}
-
-.story-list-item:hover {
-    transform: scale(1.02);
+    outline: 1px solid #777;
+    outline-offset: 0.5vw;
 }
 
 .story-list-item.active {
-    background: rgba(128, 128, 128, 0.2);
+    outline: 2px solid #0071e3;
 }
 
 .story-index-item {
@@ -500,8 +495,8 @@
 
 .story-list-story,
 .story-index-story {
-    font-size: 1.1vw;
-    line-height: 1.1vw;
+    font-size: 1.2vw;
+    line-height: 1.2vw;
     margin-bottom: 0.4vw;
 }
 
@@ -509,9 +504,9 @@
     display: flex;
     flex-wrap: wrap;
     column-gap: 0.6vw;
-    font-size: 0.8vw;
+    font-size: 0.7vw;
     line-height: 1.2vw;
-    opacity: 0.9;
+    opacity: 0.8;
 }
 
 .story-list-line span {
@@ -520,7 +515,7 @@
 
 .story-index-title {
     font-size: 1vw;
-    line-height: 1.2vw;
+    line-height: 1.4vw;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
