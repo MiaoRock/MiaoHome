@@ -70,7 +70,7 @@ async function loadStoryList(story) {
 
             const storyElement = link.appendChild(document.createElement('div'));
             storyElement.className = 'story-list-story';
-            storyElement.textContent = storyItem.storySub ? `${storyItem.story} - ${storyItem.storySub}` : storyItem.story;
+            storyElement.textContent = storyItem.storySub ? `${storyItem.storyMain} - ${storyItem.storySub}` : storyItem.storyMain;
 
             const storyInfoLine = link.appendChild(document.createElement('div'));
             storyInfoLine.className = 'story-list-line';
@@ -90,7 +90,7 @@ async function loadStoryList(story) {
             const storyLatestTitle = storyLatestLine.appendChild(document.createElement('span'));
             storyLatestTitle.textContent = `${storyItem.latestTitle}`;
 
-            if (storyItem.story === story) {
+            if (storyItem.storyMain === story) {
                 link.classList.add('active');
                 window.MiaoStory.activeListLink = link;
             }
@@ -101,7 +101,7 @@ async function loadStoryList(story) {
                 }
                 link.classList.add('active');
                 window.MiaoStory.activeListLink = link;
-                await loadStoryIndex(storyItem.story, '');
+                await loadStoryIndex(storyItem.storyMain, '');
             });
         });
         updateStoryHeight();
@@ -130,13 +130,13 @@ async function loadStoryIndex(story, title) {
 
         const indexStory = storyIndexElement.appendChild(document.createElement('div'));
         indexStory.className = 'story-index-story';
-        indexStory.textContent = storyInfo.storySub ? `${storyInfo.story} - ${storyInfo.storySub}` : storyInfo.story;
+        indexStory.textContent = storyInfo.storySub ? `${storyInfo.storyMain} - ${storyInfo.storySub}` : storyInfo.storyMain;
 
         index.forEach(titleItem => {
-            const titleText = titleItem.titleSub ? `${titleItem.title} - ${titleItem.titleSub}` : titleItem.title;
+            const titleText = titleItem.titleSub ? `${titleItem.titleMain} - ${titleItem.titleSub}` : titleItem.titleMain;
             const link = storyIndexElement.appendChild(document.createElement('a'));
             link.className = 'story-index-item';
-            link.href = `/story/${encodeURIComponent(story)}/${encodeURIComponent(titleItem.title)}/`;
+            link.href = `/story/${encodeURIComponent(story)}/${encodeURIComponent(titleItem.titleMain)}/`;
 
             if (storyIndexElement.dataset.page === 'admin') {
                 const btn = link.appendChild(document.createElement('button'));
@@ -156,7 +156,7 @@ async function loadStoryIndex(story, title) {
 
             link.title = titleText;
 
-            if (titleItem.title === title) {
+            if (titleItem.titleMain === title) {
                 link.classList.add('active');
                 window.MiaoStory.activeIndexLink = link;
             }
