@@ -163,6 +163,7 @@ async function loadStoryIndex(story, title) {
             if (storyIndexElement.dataset.page !== 'admin') {
                 link.addEventListener('click', event => {
                     event.preventDefault();
+                    window.scrollTo(0, 0);
                     if (window.MiaoStory.activeIndexLink) {
                         window.MiaoStory.activeIndexLink.classList.remove('active');
                     }
@@ -273,10 +274,7 @@ function updateStoryHeight() {
     const activeListHeight = window.MiaoStory.activeListLink ? window.MiaoStory.activeListLink.getBoundingClientRect().height : 0;
     const compactListHeight = activeListHeight + listVerticalPadding;
 
-    const minListHeight = Math.min(
-        maxListHeight,
-        Math.max(window.innerHeight * 0.2, compactListHeight)
-    );
+    const minListHeight = Math.min(maxListHeight, Math.max(window.innerHeight * 0.2, compactListHeight));
 
     const shrinkDistance = window.innerHeight * 0.4;
     const shrinkRate = Math.min(window.scrollY, shrinkDistance) / shrinkDistance;
