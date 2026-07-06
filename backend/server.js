@@ -100,41 +100,36 @@ app.get('/api/story/timeline', async (req, res) => {
         const infoDir = path.join(storyDir, 'info');
         const files = await fs.promises.readdir(infoDir);
         const timeline = [];
-
         const markdownFiles = files.filter(file => file.endsWith('.md'));
-
+        const now = new Date();
+        const currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
         markdownFiles.forEach(file => {
             const filePath = path.join(infoDir, file);
             const content = fs.readFileSync(filePath, 'utf8');
             const fm = parseFrontMatter(content);
-
-            const storyMain = fm.story || file.replace(/\.md$/, '');
-            const storySub = fm.storySub || '';
-
+            const storyMain = fm.storyMain;
+            const storySub = fm.storySub;
+            const category = fm.category;
             const storyInfoIndex = content.replace(FRONT_MATTER_REG, '').trim();
             const storyIndex = storyInfoIndex ? JSON.parse(storyInfoIndex) : [];
-
-            storyIndex.forEach(index => {
-                const titleMain = index.title || '';
-                const titleSub = index.titleSub || '';
-                const rawDateText = index.date || '';
-                const author = index.author || '';
-
-                const date = rawDateText.trim()
-                    .replace(/^(\d{4})-(\d{1,2})-(\d{1,2})(.*)$/, (m, y, month, day, rest) => {
-                        return y + '-' + month.padStart(2, '0') + '-' + day.padStart(2, '0') + rest;
-                    });
-
+            for (let i = 0; i < storyIndex.length; i--) {
+                const index = storyIndex[storyIndex.length - 1 - i];
+                const titleMain = index.titleMain;
+                const titleSub = index.titleSub;
+                const date = index.date;
+                const author = index.author;
                 const parseDateText = date.replace(/\s+/, 'T');
                 const time = new Date(parseDateText).getTime() || 0;
                 const yearMonth = String(parseDateText).slice(0, 7);
-
+                if (category !== 'Short' && i >= 3 && yearMonth !== currentMonth) {
+                    break;
+                }
                 const url = '/story/' + encodeURIComponent(storyMain) + '/' + encodeURIComponent(titleMain) + '/';
 
                 timeline.push({
                     storyMain, storySub, titleMain, titleSub, author, date, time, yearMonth, url
                 });
-            });
+            }
         });
 
         const sortedList = timeline.sort((a, b) => b.time - a.time);
@@ -169,12 +164,12 @@ app.get('/api/story/list', async (req, res) => {
             const content = await fs.promises.readFile(path.join(storyInfoDir, file), 'utf8');
             const fm = parseFrontMatter(content);
             return {
-                story: fm.story || '',
-                storySub: fm.storySub || '',
-                count: Number(fm.count || 0),
-                latestTitle: fm.latestTitle || '',
-                latestDate: fm.latestDate || '',
-                author: fm.author || ''
+                storyMain: fm.storyMain,
+                storySub: fm.storySub,
+                count: fm.count,
+                latestTitle: fm.latestTitle,
+                latestDate: fm.latestDate,
+                author: fm.author
             };
         }));
         res.json(storyList);
@@ -194,12 +189,12 @@ app.get('/api/story/index', async (req, res) => {
         const storyIndex = indexContent ? JSON.parse(indexContent) : [];
 
         res.json({
-            story: fm.story || '',
-            storySub: fm.storySub || '',
-            count: Number(fm.count || 0),
-            latestTitle: fm.latestTitle || '',
-            latestDate: fm.latestDate || '',
-            author: fm.author || '',
+            storyMain: fm.storyMain,
+            storySub: fm.storySub,
+            count: fm.count,
+            latestTitle: fm.latestTitle,
+            latestDate: fm.latestDate,
+            author: fm.author,
             index: storyIndex
         });
     } catch (err) {
@@ -218,18 +213,18 @@ app.post('/api/admin/story/add', async (req, res) => {
         const storyInfo = fs.existsSync(storyInfoPath) ? await fs.promises.readFile(storyInfoPath, 'utf8') : '';
         const storyInfoIndex = storyInfo.replace(FRONT_MATTER_REG, '').trim();
         const storyIndex = storyInfoIndex ? JSON.parse(storyInfoIndex) : [];
-        const index = storyIndex.find(index => index.title === titleMain);
+        const index = storyIndex.find(index => index.titleMain === titleMain);
         if (index) {
             index.titleSub = titleSub;
             index.author = author;
             index.date = dateTime;
         } else {
             storyIndex.push({
-                title: titleMain, titleSub: titleSub, author: author, date: dateTime,
+                titleMain: titleMain, titleSub: titleSub, author: author, date: dateTime,
             });
         }
 
-        const infoMarkdown = `---\nstory: ${storyMain}\nstorySub: ${storySub}\ncount: ${storyIndex.length}\nlatestTitle: ${title}\nlatestDate: ${dateTime}\nauthor: ${author}\n---\n${JSON.stringify(storyIndex, null, 4)}\n`;
+        const infoMarkdown = `---\nstoryMain: ${storyMain}\nstorySub: ${storySub}\ncount: ${storyIndex.length}\nlatestTitle: ${title}\nlatestDate: ${dateTime}\nauthor: ${author}\n---\n${JSON.stringify(storyIndex, null, 4)}\n`;
         const markdown = `---\nstory: ${story}\ntitle: ${title}\nauthor: ${author}\ndate: ${dateTime}\n---\n${content.trimEnd()}\n`;
 
         await fs.promises.writeFile(storyInfoPath, infoMarkdown, 'utf8');
@@ -244,7 +239,20 @@ app.post('/api/admin/story/add', async (req, res) => {
 
 function parseFrontMatter(content) {
     const match = content.match(FRONT_MATTER_REG);
-    const fm = {};
+    const fm = {
+        story: '',
+        storyMain: '',
+        storySub: '',
+        title: '',
+        titleMain: '',
+        titleSub: '',
+        author: '',
+        date: '',
+        category: '',
+        count: '0',
+        latestTitle: '',
+        latestDate: ''
+    };
     if (match) {
         match[1].split(/\r?\n/).forEach(line => {
             const m = line.match(FRONT_MATTER_LINE_REG);
