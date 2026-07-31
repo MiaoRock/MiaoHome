@@ -205,24 +205,14 @@ function parseStoryUrl(url) {
 
 async function editStory(url) {
     const API_BASE = window.APP_CONFIG.API_BASE;
-    const mdUrl = url.replace(/\/$/, '') + '.md';
-    const res = await fetch(`${API_BASE}${mdUrl}`);
+    const {urlStory, urlTitle} = parseStoryUrl(url);
+    const res = await fetch(`${API_BASE}/api/story/content?story=${encodeURIComponent(urlStory)}&title=${encodeURIComponent(urlTitle)}`);
     if (!res.ok) {
         alert('读取失败');
         return;
     }
-    const mdText = await res.text();
-    const fmMatch = mdText.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n)?/);
-    const fm = {};
-    if (fmMatch) {
-        fmMatch[1].split(/\r?\n/).forEach(line => {
-            const m = line.match(/^([a-zA-Z0-9_-]+)\s*:\s*(.*)$/);
-            if (m) {
-                fm[m[1].trim()] = m[2].trim().replace(/^['"]|['"]$/g, '');
-            }
-        });
-    }
-    const content = mdText.replace(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n)?/, '');
+    const fm = await res.json();
+    const content = fm.content;
 
     const storyInput = document.getElementById('story-add-story');
     const storySubInput = document.getElementById('story-add-story-sub');

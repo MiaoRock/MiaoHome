@@ -223,9 +223,21 @@ app.post('/api/admin/story/add', async (req, res) => {
                 titleMain: titleMain, titleSub: titleSub, author: author, date: dateTime,
             });
         }
-
+        const cleanContent = (content || '')
+            .replace(/\r\n/g, '\n')
+            .replace(/\r/g, '\n')
+            .replace(/\uFEFF/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .split('\n')
+            .map(line => line
+                .replace(/^[\s　]+/, '')
+                .replace(/[\s　]+$/, '')
+            )
+            .filter(line => line !== '')
+            .map(line => `　　${line}`)
+            .join('\n');
         const infoMarkdown = `---\nstoryMain: ${storyMain}\nstorySub: ${storySub}\ncount: ${storyIndex.length}\nlatestTitle: ${title}\nlatestDate: ${dateTime}\nauthor: ${author}\n---\n${JSON.stringify(storyIndex, null, 4)}\n`;
-        const markdown = `---\nstory: ${story}\ntitle: ${title}\nauthor: ${author}\ndate: ${dateTime}\n---\n${content.trimEnd()}\n`;
+        const markdown = `---\nstory: ${story}\ntitle: ${title}\nauthor: ${author}\ndate: ${dateTime}\n---\n${cleanContent}\n`;
 
         await fs.promises.writeFile(storyInfoPath, infoMarkdown, 'utf8');
         await fs.promises.mkdir(path.dirname(filePath), {recursive: true});
